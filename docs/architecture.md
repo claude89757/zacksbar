@@ -39,6 +39,15 @@ flowchart LR
 6. The native host decodes the Chrome Native Messaging frame, appends `native-events.jsonl`, and updates `latest-state.json`.
 7. The menu bar app reads `latest-state.json` at launch and on Refresh to update status and evaluate notification rules.
 
+## Command Flow
+
+The macOS app can queue short-lived browser commands in `native-commands.jsonl`. The native host drains that queue after the next browser-to-native message and writes each queued command back to Chrome before the normal ack. The service worker currently handles:
+
+- `tab.open`: opens a URL in a Chrome tab.
+- `extension.reload`: reloads the unpacked companion extension with `chrome.runtime.reload()`.
+
+This keeps local development upgrades inside Chrome's extension permission model. ZacksBar does not edit Tampermonkey storage or browser profile files directly.
+
 ## Notifications
 
 The macOS app uses `UserNotifications` for user-facing alerts. Core computes pending notifications from `LatestAppState`, current watch rules, and session-level delivered notification IDs. The app delivers each pending notification once per app session.
@@ -68,6 +77,7 @@ The native host writes local app state under:
 Important files:
 
 - `native-events.jsonl`: append-only event log for diagnostics.
+- `native-commands.jsonl`: short-lived command queue from the macOS app to the browser companion.
 - `latest-state.json`: compact latest availability/captcha/health snapshot for the menu app.
 - `watch-rules.json`: local availability alert settings.
 
@@ -85,6 +95,6 @@ These files are local runtime data and must not be committed.
 ZacksBar should support two upgrade tracks:
 
 - App upgrade: future signed macOS releases can update the native app, native host, docs, and bundled extension assets.
-- Extension/script upgrade: the production path is the Chrome companion extension. Tampermonkey scripts are treated as migration references, not as the long-term runtime. Future import helpers may read an existing userscript only after explicit user approval.
+- Extension/script upgrade: the production path is the Chrome companion extension. In development builds, Setup Assistant can queue an `extension.reload` command so the unpacked extension reloads changed local assets. Tampermonkey scripts are treated as migration references, not as the long-term runtime. Future import helpers may read an existing userscript only after explicit user approval.
 
 The native host manifest is installed locally because Chrome requires it. It points Chrome to the native host executable and whitelists the local extension ID.

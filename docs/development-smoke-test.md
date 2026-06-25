@@ -49,6 +49,7 @@ Expected result:
    - Chrome Extension ID is the pasted value.
    - Native Host Executable is `ready`.
    - Native Host Manifest is `installed`.
+   - Browser Companion is `waiting` until Chrome connects, then shows the loaded companion version.
 
 Script fallback:
 
@@ -73,6 +74,8 @@ Script fallback:
 8. If the default 19:00-21:00 watch rule matches a continuous available range, confirm macOS shows a `Court available` notification.
 9. If a captcha appears, confirm the menu reports manual attention and macOS shows a `ZacksBar needs captcha` notification.
 10. Click a notification with a page URL and confirm it opens the ydmap page in Chrome when Chrome is installed.
+11. Click `Reload Browser Extension` in `Setup Assistant...`.
+12. Reload the ydmap page and confirm `Browser Companion` still shows the expected version after Chrome reconnects.
 
 ## 6. Exercise Alert Settings
 
@@ -123,4 +126,5 @@ Before considering the smoke test complete, confirm:
 - URLs in fixtures and logs do not contain query strings with private identifiers.
 - The app does not bypass captcha or submit a booking automatically.
 - `latest-state.json` remains local runtime data and is not tracked by Git.
+- `native-commands.jsonl` remains local runtime data and is not tracked by Git.
 - `watch-rules.json` remains local user settings and is not tracked by Git.

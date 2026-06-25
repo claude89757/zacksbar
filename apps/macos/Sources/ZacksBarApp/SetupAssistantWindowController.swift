@@ -13,7 +13,7 @@ final class SetupAssistantWindowController: NSWindowController {
         self.model = model
         self.openDiagnostics = openDiagnostics
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 560, height: 360),
+            contentRect: NSRect(x: 0, y: 0, width: 620, height: 390),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -58,12 +58,14 @@ final class SetupAssistantWindowController: NSWindowController {
 
         let installButton = NSButton(title: "Install Native Host", target: self, action: #selector(installNativeHost(_:)))
         installButton.bezelStyle = .rounded
+        let reloadExtensionButton = NSButton(title: "Reload Browser Extension", target: self, action: #selector(reloadBrowserExtension(_:)))
+        reloadExtensionButton.bezelStyle = .rounded
         let refreshButton = NSButton(title: "Refresh", target: self, action: #selector(refreshButtonClicked(_:)))
         refreshButton.bezelStyle = .rounded
         let diagnosticsButton = NSButton(title: "Diagnostics", target: self, action: #selector(openDiagnosticsButtonClicked(_:)))
         diagnosticsButton.bezelStyle = .rounded
 
-        let buttonRow = NSStackView(views: [installButton, refreshButton, diagnosticsButton])
+        let buttonRow = NSStackView(views: [installButton, reloadExtensionButton, refreshButton, diagnosticsButton])
         buttonRow.orientation = .horizontal
         buttonRow.spacing = 8
         buttonRow.alignment = .centerY
@@ -149,6 +151,17 @@ final class SetupAssistantWindowController: NSWindowController {
             statusLabel.stringValue = "Install failed: \(error)"
         }
         refresh()
+    }
+
+    @objc private func reloadBrowserExtension(_ sender: Any?) {
+        do {
+            try model.requestBrowserCompanionReload()
+            refresh()
+            statusLabel.stringValue = "Browser extension reload queued"
+        } catch {
+            refresh()
+            statusLabel.stringValue = "Reload request failed: \(error)"
+        }
     }
 
     @objc private func openDiagnosticsButtonClicked(_ sender: Any?) {

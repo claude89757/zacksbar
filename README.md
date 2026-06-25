@@ -42,7 +42,7 @@ swift test
 swift build
 ```
 
-Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then open `Setup Assistant...` from the menu bar item. Paste the Chrome extension ID and choose `Install Native Host`.
+Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then open `Setup Assistant...` from the menu bar item. Paste the Chrome extension ID and choose `Install Native Host`. The setup assistant also shows the loaded browser companion version and can queue a `Reload Browser Extension` command for the next Chrome native messaging connection.
 
 The app asks macOS for notification permission on launch. Captcha notifications and matching availability notifications include the latest supported ydmap page URL; clicking the notification opens it in Chrome when Chrome is installed.
 
@@ -62,7 +62,7 @@ Local native state is written under:
 ~/Library/Application Support/ZacksBar/
 ```
 
-Important local files include `latest-state.json` for browser state and `watch-rules.json` for alert settings. Use `Settings and diagnostics...` from the menu bar item to inspect local bridge state and copy a report for bug reports.
+Important local files include `latest-state.json` for browser state, `watch-rules.json` for alert settings, and `native-commands.jsonl` for short-lived queued browser commands. Use `Settings and diagnostics...` from the menu bar item to inspect local bridge state and copy a report for bug reports.
 
 ## Documentation
 

@@ -100,6 +100,18 @@ final class AppModelNotificationTests: XCTestCase {
         ))
     }
 
+    func testRequestBrowserCompanionReloadQueuesNativeCommand() throws {
+        let store = try temporaryStore()
+        let model = AppModel(store: store, notificationDelivery: RecordingNotificationDelivery())
+
+        try model.requestBrowserCompanionReload()
+
+        let commands = try store.drainCommands()
+        XCTAssertEqual(commands.count, 1)
+        XCTAssertEqual(commands.first?.type, "extension.reload")
+        XCTAssertEqual(commands.first?.source, "zacksbar-app")
+    }
+
     private func temporaryStore() throws -> AppSupportStore {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ZacksBarAppTests-\(UUID().uuidString)", isDirectory: true)

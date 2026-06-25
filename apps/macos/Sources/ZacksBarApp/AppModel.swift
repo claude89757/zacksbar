@@ -95,6 +95,18 @@ final class AppModel: ObservableObject {
         return WatchRuleSuggestionBuilder.firstContinuousAvailableRange(from: state.latestAvailability)
     }
 
+    func requestBrowserCompanionReload() throws {
+        let command = NativeMessage(
+            schemaVersion: 1,
+            messageId: "command-\(UUID().uuidString)",
+            type: "extension.reload",
+            sentAt: Date(),
+            source: "zacksbar-app",
+            payload: [:]
+        )
+        try store?.appendCommand(command)
+    }
+
     var primaryWatchRule: WatchRule {
         rules.first ?? WatchRule.defaultRules[0]
     }

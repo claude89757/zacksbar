@@ -32,14 +32,20 @@ public extension AppSupportStore {
     func makeSetupChecklist(
         extensionID: ChromeExtensionID?,
         nativeHostExecutable: URL,
-        manifestURL: URL = DiagnosticPaths.defaultChromeNativeHostManifest
+        manifestURL: URL = DiagnosticPaths.defaultChromeNativeHostManifest,
+        expectedCompanionVersion: String = "0.1.0"
     ) throws -> SetupChecklist {
         let nativeHostReady = FileManager.default.fileExists(atPath: nativeHostExecutable.path)
         let manifestReady = FileManager.default.fileExists(atPath: manifestURL.path)
         let latestState = try readLatestState()
         let latestMessage = latestState?.latestMessageType
+        let companionVersion = latestState?.latestHealth?.payload["version"]?.stringValue
         let parserDiagnostics = latestState?.latestParserDiagnostics
         let parserSlotCount = parserDiagnostics?.payload["slotCount"]?.intValue
+        let companionStatus = companionStatus(
+            actualVersion: companionVersion,
+            expectedVersion: expectedCompanionVersion
+        )
 
         return SetupChecklist(steps: [
             SetupStep(
@@ -63,11 +69,26 @@ public extension AppSupportStore {
                 isComplete: latestMessage != nil
             ),
             SetupStep(
+                label: "Browser Companion",
+                value: companionStatus.value,
+                isComplete: companionStatus.isComplete
+            ),
+            SetupStep(
                 label: "Parser Diagnostics",
                 value: parserSlotCount.map { "\($0) slots" } ?? "waiting",
                 isComplete: parserDiagnostics != nil
             )
         ])
+    }
+
+    private func companionStatus(actualVersion: String?, expectedVersion: String) -> (value: String, isComplete: Bool) {
+        guard let actualVersion else {
+            return ("waiting", false)
+        }
+        guard actualVersion == expectedVersion else {
+            return ("reload \(actualVersion) -> \(expectedVersion)", false)
+        }
+        return (actualVersion, true)
     }
 }
 

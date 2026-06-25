@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "messageId": "fixture-availability-1",
+  "type": "availability.updated",
+  "sentAt": "2026-06-25T12:00:00Z",
+  "source": "content-script",
+  "payload": {
+    "venue": "bawtt tennis",
+    "pageUrl": "https://bawtt.ydmap.cn/booking/schedule/example",
+    "dateLabel": "latest",
+    "courts": [
+      { "id": "court-1", "name": "1号场" },
+      { "id": "court-5", "name": "5号场" }
+    ],
+    "slots": [
+      { "courtId": "court-1", "start": "19:00", "end": "20:00", "available": true },
+      { "courtId": "court-1", "start": "20:00", "end": "21:00", "available": true },
+      { "courtId": "court-5", "start": "19:00", "end": "20:00", "available": false }
+    ]
+  }
+}

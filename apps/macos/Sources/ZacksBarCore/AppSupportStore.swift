@@ -81,6 +81,22 @@ public final class AppSupportStore {
         try data.write(to: watchRulesFile, options: [.atomic])
     }
 
+    public func appendCommand(_ message: NativeMessage) throws {
+        let data = try JSONEncoder.zacksBar.encode(message)
+        try appendLine(data, to: commandsFile)
+    }
+
+    public func drainCommands() throws -> [NativeMessage] {
+        guard FileManager.default.fileExists(atPath: commandsFile.path) else { return [] }
+        let data = try Data(contentsOf: commandsFile)
+        try FileManager.default.removeItem(at: commandsFile)
+        return String(decoding: data, as: UTF8.self)
+            .split(separator: "\n", omittingEmptySubsequences: true)
+            .compactMap { line in
+                try? JSONDecoder.zacksBar.decode(NativeMessage.self, from: Data(line.utf8))
+            }
+    }
+
     private func appendLine(_ data: Data, to file: URL) throws {
         if !FileManager.default.fileExists(atPath: file.path) {
             FileManager.default.createFile(atPath: file.path, contents: nil)

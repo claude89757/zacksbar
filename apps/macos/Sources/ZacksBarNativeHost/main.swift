@@ -36,6 +36,9 @@ let store = try AppSupportStore()
 
 while let message = try readNativeMessage(from: input) {
     try store.appendEvent(message)
+    for command in try store.drainCommands() {
+        try writeNativeMessage(command, to: output)
+    }
     let ack = NativeMessage(
         schemaVersion: 1,
         messageId: "ack-\(message.messageId)",

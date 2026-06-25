@@ -88,6 +88,18 @@ final class AppModelNotificationTests: XCTestCase {
         ))
     }
 
+    func testMakesWatchRuleSuggestionFromLatestAvailability() throws {
+        let store = try temporaryStore()
+        try store.appendEvent(availabilityMessage(start: "18:00", middle: "19:00", end: "20:00"))
+        let model = AppModel(store: store, notificationDelivery: RecordingNotificationDelivery())
+
+        XCTAssertEqual(model.makeWatchRuleSuggestion(), WatchRuleSuggestion(
+            start: "18:00",
+            end: "20:00",
+            courtName: "1号场"
+        ))
+    }
+
     private func temporaryStore() throws -> AppSupportStore {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ZacksBarAppTests-\(UUID().uuidString)", isDirectory: true)

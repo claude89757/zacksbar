@@ -53,6 +53,8 @@ Notification clicks are handled inside the macOS app. When a notification contai
 
 The app currently supports one primary availability watch rule. Users edit it from `Alert Settings...` in the menu bar app. The user-facing rule includes start time, end time, and optional court keywords. Empty court keywords match any court.
 
+The settings window can fill Start and End from the latest parsed availability snapshot. Core converts the latest `availability.updated` message into availability slots, then suggests the earliest continuous available range. The suggestion is only a draft until the user clicks Save.
+
 Rules are persisted in `watch-rules.json` under Application Support. If the file is missing, ZacksBar uses the default 19:00-21:00 rule. The stored Codable model still contains a compatibility `dateMode` field, but the settings UI does not expose it.
 
 ## Local State

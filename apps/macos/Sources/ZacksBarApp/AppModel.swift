@@ -88,6 +88,13 @@ final class AppModel: ObservableObject {
         reloadLatestState()
     }
 
+    func makeWatchRuleSuggestion() -> WatchRuleSuggestion? {
+        guard let state = try? store?.readLatestState() else {
+            return nil
+        }
+        return WatchRuleSuggestionBuilder.firstContinuousAvailableRange(from: state.latestAvailability)
+    }
+
     var primaryWatchRule: WatchRule {
         rules.first ?? WatchRule.defaultRules[0]
     }

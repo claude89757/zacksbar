@@ -60,6 +60,7 @@ cd ../..
 
 - Verify the watch rule time range uses the same labels as the parsed page snapshot.
 - Open `Alert Settings...` and confirm Start, End, and Court keywords match what you expect.
+- Click `Use Current Page` after an availability update to fill Start and End from the latest parsed page state.
 - Prefer continuous time ranges that match slot boundaries shown on the ydmap page.
 - The current default watch rule is 19:00-21:00.
 - Open diagnostics and confirm `Latest Message` is `availability.updated`.

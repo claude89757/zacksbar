@@ -74,9 +74,11 @@ final class WatchRuleSettingsWindowController: NSWindowController {
         saveButton.keyEquivalent = "\r"
         let resetButton = NSButton(title: "Reset Default", target: self, action: #selector(resetDefault(_:)))
         resetButton.bezelStyle = .rounded
+        let useCurrentPageButton = NSButton(title: "Use Current Page", target: self, action: #selector(useCurrentPage(_:)))
+        useCurrentPageButton.bezelStyle = .rounded
         let refreshButton = NSButton(title: "Refresh", target: self, action: #selector(refreshButtonClicked(_:)))
         refreshButton.bezelStyle = .rounded
-        let buttonRow = NSStackView(views: [saveButton, resetButton, refreshButton])
+        let buttonRow = NSStackView(views: [saveButton, useCurrentPageButton, resetButton, refreshButton])
         buttonRow.orientation = .horizontal
         buttonRow.spacing = 8
         buttonRow.alignment = .centerY
@@ -163,6 +165,24 @@ final class WatchRuleSettingsWindowController: NSWindowController {
         } catch {
             statusLabel.stringValue = "Reset failed: \(error.localizedDescription)"
         }
+    }
+
+    @objc private func useCurrentPage(_ sender: Any?) {
+        guard let suggestion = model.makeWatchRuleSuggestion() else {
+            statusLabel.stringValue = "No available range in latest page state"
+            return
+        }
+
+        startField.stringValue = suggestion.start
+        endField.stringValue = suggestion.end
+        renderSummary(WatchRule(
+            id: model.primaryWatchRule.id,
+            dateMode: .latestBookable,
+            start: suggestion.start,
+            end: suggestion.end,
+            courtKeywords: keywordsField.normalizedKeywords
+        ))
+        statusLabel.stringValue = "Filled \(suggestion.start)-\(suggestion.end) from latest page"
     }
 
     @objc private func refreshButtonClicked(_ sender: Any?) {

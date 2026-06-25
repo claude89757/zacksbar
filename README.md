@@ -46,7 +46,7 @@ Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then op
 
 The app asks macOS for notification permission on launch. Captcha notifications and matching availability notifications include the latest supported ydmap page URL; clicking the notification opens it in Chrome when Chrome is installed.
 
-Use `Alert Settings...` from the menu bar item to change the primary availability alert rule. The rule is stored locally and applied immediately after Save.
+Use `Alert Settings...` from the menu bar item to change the primary availability alert rule. `Use Current Page` fills Start and End from the latest parsed page state, then Save stores the rule locally and applies it.
 
 The script remains available as a development fallback:
 

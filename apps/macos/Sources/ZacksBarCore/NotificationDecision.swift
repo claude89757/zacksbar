@@ -63,32 +63,6 @@ public enum NotificationDecision {
 }
 
 private extension NativeMessage {
-    var availabilitySlots: [AvailabilitySlot] {
-        let courtNames = payload["courts"]?.objectArrayValue?.reduce(into: [String: String]()) { result, object in
-            guard let id = object["id"]?.stringValue,
-                  let name = object["name"]?.stringValue else {
-                return
-            }
-            result[id] = name
-        } ?? [:]
-
-        return payload["slots"]?.objectArrayValue?.compactMap { object in
-            guard let courtId = object["courtId"]?.stringValue,
-                  let start = object["start"]?.stringValue,
-                  let end = object["end"]?.stringValue,
-                  let available = object["available"]?.boolValue else {
-                return nil
-            }
-            return AvailabilitySlot(
-                courtId: courtId,
-                courtName: object["courtName"]?.stringValue ?? courtNames[courtId] ?? courtId,
-                start: start,
-                end: end,
-                available: available
-            )
-        } ?? []
-    }
-
     func availabilityBody(courtName: String, start: String, end: String) -> String {
         [
             payload["venue"]?.nonEmptyStringValue,
@@ -108,16 +82,4 @@ private extension JSONValue {
         return value
     }
 
-    var boolValue: Bool? {
-        if case .bool(let value) = self { return value }
-        return nil
-    }
-
-    var objectArrayValue: [[String: JSONValue]]? {
-        guard case .array(let values) = self else { return nil }
-        return values.compactMap { value in
-            guard case .object(let object) = value else { return nil }
-            return object
-        }
-    }
 }

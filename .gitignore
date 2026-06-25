@@ -11,5 +11,5 @@ dist/
 .env
 .env.*
 
-# Local notes containing credentials or machine-specific setup.
-wxsports/prory.md
+# Local reference material containing credentials or machine-specific setup.
+wxsports/

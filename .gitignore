@@ -2,6 +2,7 @@
 .superpowers/
 .worktrees/
 build/
+apps/macos/.build/
 DerivedData/
 *.xcuserdata/
 *.xcworkspace/xcuserdata/

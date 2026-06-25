@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zacksbar.dev/schemas/native-message.schema.json",
+  "title": "ZacksBar Native Message",
+  "type": "object",
+  "required": ["schemaVersion", "messageId", "type", "sentAt", "source", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "integer", "minimum": 1 },
+    "messageId": { "type": "string", "minLength": 1 },
+    "type": {
+      "type": "string",
+      "enum": [
+        "page.snapshot",
+        "availability.updated",
+        "captcha.detected",
+        "rule.createDraft",
+        "rule.match",
+        "tab.open",
+        "tab.prefill",
+        "health.ping",
+        "diagnostics.export"
+      ]
+    },
+    "sentAt": { "type": "string", "format": "date-time" },
+    "source": {
+      "type": "string",
+      "enum": ["content-script", "service-worker", "native-host", "mac-app"]
+    },
+    "payload": { "type": "object" }
+  }
+}

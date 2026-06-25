@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "messageId": "fixture-captcha-1",
+  "type": "captcha.detected",
+  "sentAt": "2026-06-25T12:01:00Z",
+  "source": "content-script",
+  "payload": {
+    "pageUrl": "https://bawtt.ydmap.cn/booking/service/example",
+    "reason": "aliyun-slider",
+    "textEvidence": "请完成滑动验证"
+  }
+}

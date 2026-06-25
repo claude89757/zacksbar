@@ -13,6 +13,7 @@ let package = Package(
         .target(name: "ZacksBarCore"),
         .executableTarget(name: "ZacksBarNativeHost", dependencies: ["ZacksBarCore"]),
         .executableTarget(name: "ZacksBarApp", dependencies: ["ZacksBarCore"]),
-        .testTarget(name: "ZacksBarCoreTests", dependencies: ["ZacksBarCore"])
+        .testTarget(name: "ZacksBarCoreTests", dependencies: ["ZacksBarCore"]),
+        .testTarget(name: "ZacksBarAppTests", dependencies: ["ZacksBarApp", "ZacksBarCore"])
     ]
 )

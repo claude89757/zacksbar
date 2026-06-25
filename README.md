@@ -2,7 +2,7 @@
 
 ZacksBar is a macOS menu bar product for monitoring ydmap tennis court availability from Chrome and alerting the user when manual attention is needed.
 
-The planned v1 architecture is:
+The v1 architecture is:
 
 ```text
 ydmap booking page
@@ -13,7 +13,7 @@ ydmap booking page
   -> Swift macOS menu bar app
 ```
 
-The initial repository currently contains the approved product design spec. Implementation planning and scaffolding will follow after review.
+This repository currently contains the product skeleton: protocol schemas, Chrome companion extension scaffolding, Swift core, native host framing, menu bar app skeleton, installer helper, documentation, and CI.
 
 ## Scope
 
@@ -25,6 +25,38 @@ The initial repository currently contains the approved product design spec. Impl
 - Semi-automated page opening and prefill only.
 
 ZacksBar does not submit reservations, bypass captcha, store credentials, or modify local Tampermonkey scripts.
+
+## Development
+
+Run JavaScript and protocol checks:
+
+```bash
+npm test
+```
+
+Run Swift checks:
+
+```bash
+cd apps/macos
+swift test
+swift build
+```
+
+Load the Chrome extension from `extensions/chrome`, then install the native host manifest with:
+
+```bash
+./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "<chrome-extension-id>"
+```
+
+See [docs/development-smoke-test.md](docs/development-smoke-test.md) for the full local smoke test.
+
+## Documentation
+
+- [Architecture](docs/architecture.md)
+- [Install](docs/install.md)
+- [Privacy](docs/privacy.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [Contributing](docs/contributing.md)
 
 ## Design
 

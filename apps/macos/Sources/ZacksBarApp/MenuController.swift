@@ -1,12 +1,13 @@
 import AppKit
 
 @MainActor
-final class MenuController {
+final class MenuController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let model: AppModel
 
     init(model: AppModel) {
         self.model = model
+        super.init()
         statusItem.button?.title = "ZB"
         rebuildMenu()
     }
@@ -19,11 +20,19 @@ final class MenuController {
             menu.addItem(NSMenuItem(title: "Alert: \(latestAlert)", action: nil, keyEquivalent: ""))
         }
         menu.addItem(NSMenuItem.separator())
+        let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshLatestState(_:)), keyEquivalent: "r")
+        refreshItem.target = self
+        menu.addItem(refreshItem)
         menu.addItem(NSMenuItem(title: "Create watch rule from current page", action: nil, keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Pause monitoring for 30 minutes", action: nil, keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Settings and diagnostics...", action: nil, keyEquivalent: ""))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
+    }
+
+    @objc private func refreshLatestState(_ sender: Any?) {
+        model.reloadLatestState()
+        rebuildMenu()
     }
 }

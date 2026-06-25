@@ -13,7 +13,7 @@ ydmap booking page
   -> Swift macOS menu bar app
 ```
 
-This repository currently contains the product skeleton plus the first live pipeline: the Chrome companion can read ydmap Vue schedule state, emit deduped availability/captcha events, the native host can persist latest local state, and the menu bar app can display that state.
+This repository currently contains the product skeleton plus the first live pipeline: the Chrome companion can read ydmap Vue schedule state, emit deduped availability/captcha events, the native host can persist latest local state, and the menu bar app can display and diagnose that state.
 
 ## Scope
 
@@ -55,6 +55,8 @@ Local native state is written under:
 ```text
 ~/Library/Application Support/ZacksBar/latest-state.json
 ```
+
+Use `Settings and diagnostics...` from the menu bar item to inspect local bridge state and copy a report for bug reports.
 
 ## Documentation
 

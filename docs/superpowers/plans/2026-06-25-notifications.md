@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add captcha and watch-rule macOS notifications with session-level dedupe and Chrome page jump commands.
+**Goal:** Add captcha and watch-rule macOS notifications with session-level dedupe and direct Chrome page jumps.
 
-**Architecture:** `ZacksBarCore` computes pure `PendingNotification` values from latest state and watch rules. `ZacksBarApp` delivers those values through `UserNotifications` and writes `tab.open` commands through the existing app support store.
+**Architecture:** `ZacksBarCore` computes pure `PendingNotification` values from latest state and watch rules. `ZacksBarApp` delivers those values through `UserNotifications` and handles notification clicks by opening the action URL in Chrome, falling back to the default browser when Chrome is unavailable.
 
 **Tech Stack:** Swift Package Manager, XCTest, AppKit, UserNotifications, existing Chrome native messaging files.
 
@@ -24,30 +24,35 @@
 - [ ] Run `swift test --filter NotificationDecisionTests` and confirm the tests pass.
 - [ ] Commit with `feat: add notification decision model`.
 
-### Task 2: Store Browser Commands
+### Task 2: App Notification Evaluation
 
 **Files:**
-- Modify: `apps/macos/Sources/ZacksBarCore/AppSupportStore.swift`
-- Modify: `apps/macos/Tests/ZacksBarCoreTests/AppSupportStoreTests.swift`
+- Modify: `apps/macos/Package.swift`
+- Modify: `apps/macos/Sources/ZacksBarApp/AppModel.swift`
+- Create: `apps/macos/Tests/ZacksBarAppTests/AppModelNotificationTests.swift`
 
-- [ ] Write a failing test that calls `appendCommand` with a `tab.open` command and asserts `native-commands.jsonl` contains one encoded line.
-- [ ] Run `swift test --filter AppSupportStoreTests` and confirm the new test fails because `appendCommand` does not exist.
-- [ ] Implement `appendCommand(_:)` by reusing the existing private line append helper.
-- [ ] Run `swift test --filter AppSupportStoreTests` and confirm the tests pass.
-- [ ] Commit with `feat: persist browser open commands`.
+- [ ] Add a `ZacksBarAppTests` test target.
+- [ ] Write a failing test that stores a matching availability message, initializes `AppModel` with a mock notification delivery object, and asserts one notification is delivered.
+- [ ] Write a failing test that calls `handle(message:)` twice with the same captcha message and asserts delivery happens once.
+- [ ] Run `swift test --filter AppModelNotificationTests` and confirm the tests fail because `AppModel` has no delivery injection or notification evaluation.
+- [ ] Inject a notification delivery protocol into `AppModel`.
+- [ ] Add session-level delivered notification IDs in `AppModel`.
+- [ ] Evaluate pending notifications after `reloadLatestState()` and `handle(message:)`.
+- [ ] Run `swift test --filter AppModelNotificationTests` and confirm the tests pass.
+- [ ] Commit with `feat: evaluate app notifications`.
 
 ### Task 3: macOS Notification Delivery
 
 **Files:**
 - Create: `apps/macos/Sources/ZacksBarApp/NotificationDelivery.swift`
-- Modify: `apps/macos/Sources/ZacksBarApp/AppModel.swift`
 - Modify: `apps/macos/Sources/ZacksBarApp/ZacksBarApplication.swift`
 
 - [ ] Add an app-layer `NotificationDelivering` protocol.
 - [ ] Implement `MacNotificationDelivery` using `UNUserNotificationCenter`.
 - [ ] Request notification authorization on app launch.
-- [ ] Add `AppModel.evaluateNotifications()` that uses Core decisions, delivery, and command persistence.
-- [ ] Call evaluation after `reloadLatestState()` and `handle(message:)`.
+- [ ] Add a `BrowserOpening` protocol.
+- [ ] Implement `ChromeBrowserOpener` using Chrome bundle identifier first and default browser fallback second.
+- [ ] Handle notification click responses by opening `actionURL` from notification `userInfo`.
 - [ ] Run `swift build` and `swift test`.
 - [ ] Commit with `feat: deliver macos notifications`.
 

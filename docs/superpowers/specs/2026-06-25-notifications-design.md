@@ -6,11 +6,11 @@ Add the first production notification loop for ZacksBar: captcha events and matc
 
 ## Scope
 
-This iteration implements notification decision logic, notification delivery, and browser-open commands. It does not add the full watch-rule settings UI yet. The app continues to use the existing default watch rule for 19:00-21:00 on the latest bookable day.
+This iteration implements notification decision logic, notification delivery, and browser opening from notification clicks. It does not add the full watch-rule settings UI yet. The app continues to use the existing default watch rule for 19:00-21:00 on the latest bookable day.
 
 ## Approach
 
-Core owns pure notification decisions. Given a `LatestAppState`, watch rules, and the notification IDs already delivered in the current app session, Core returns zero or more `PendingNotification` values. The app layer owns macOS delivery through `UserNotifications` and command writing through `AppSupportStore`.
+Core owns pure notification decisions. Given a `LatestAppState`, watch rules, and the notification IDs already delivered in the current app session, Core returns zero or more `PendingNotification` values. The app layer owns macOS delivery through `UserNotifications` and browser opening through `NSWorkspace`.
 
 This keeps notification behavior testable without macOS UI APIs and leaves the delivery mechanism replaceable for later signed release work.
 
@@ -36,9 +36,9 @@ Non-matches do not notify. Parser diagnostics do not notify in this iteration; t
 
 ## Browser Opening
 
-When a notification has an action URL, the app writes a `tab.open` command to `native-commands.jsonl`. The native host will return pending commands to the extension on the next message response, and the existing service worker already handles `tab.open` by creating a Chrome tab.
+When a notification has an action URL, the app handles the notification click locally and opens the URL immediately. It first targets the installed Chrome application by bundle identifier (`com.google.Chrome`), then falls back to the user's default browser if Chrome is unavailable.
 
-If no browser URL exists, the notification still appears, but clicking it has no browser command to write.
+If no browser URL exists, the notification still appears, but clicking it has no page to open.
 
 ## UX Behavior
 
@@ -56,4 +56,4 @@ Notifications avoid raw URLs, credentials, cookies, and query strings in visible
 
 ## Testing
 
-Core tests cover captcha decisions, availability decisions, non-matches, and dedupe behavior. App delivery is wired behind a protocol so it can be tested without sending real macOS notifications.
+Core tests cover captcha decisions, availability decisions, non-matches, and dedupe behavior. App delivery is wired behind protocols so it can be tested without sending real macOS notifications or opening a real browser.

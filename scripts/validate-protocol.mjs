@@ -14,6 +14,7 @@ const allowedTypes = new Set([
   'tab.open',
   'tab.prefill',
   'health.ping',
+  'parser.diagnostics',
   'diagnostics.export'
 ]);
 

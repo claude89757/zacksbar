@@ -45,7 +45,7 @@
 - Create: `apps/macos/Sources/ZacksBarApp/WatchRuleSettingsWindowController.swift`
 - Modify: `apps/macos/Sources/ZacksBarApp/MenuController.swift`
 
-- [ ] Add `WatchRuleSettingsWindowController` with date mode popup, start field, end field, court keywords field, status label, and Save button.
+- [ ] Add `WatchRuleSettingsWindowController` with start field, end field, court keywords field, status label, and Save button.
 - [ ] Add `Alert Settings...` menu item that opens the settings window.
 - [ ] Keep `Create watch rule from current page` disabled or absent until page-derived drafts are implemented.
 - [ ] Run `swift build` and confirm the app target compiles.

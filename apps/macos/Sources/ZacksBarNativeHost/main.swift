@@ -32,7 +32,13 @@ func writeNativeMessage(_ message: NativeMessage, to handle: FileHandle) throws 
 
 let input = FileHandle.standardInput
 let output = FileHandle.standardOutput
-let store = try AppSupportStore()
+let store: AppSupportStore
+if let overrideDirectory = ProcessInfo.processInfo.environment["ZACKSBAR_APP_SUPPORT_DIR"],
+   !overrideDirectory.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+    store = try AppSupportStore(directory: URL(fileURLWithPath: overrideDirectory, isDirectory: true))
+} else {
+    store = try AppSupportStore()
+}
 
 while let message = try readNativeMessage(from: input) {
     try store.appendEvent(message)

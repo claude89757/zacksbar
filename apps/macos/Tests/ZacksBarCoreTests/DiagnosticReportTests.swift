@@ -55,4 +55,38 @@ final class DiagnosticReportTests: XCTestCase {
         XCTAssertTrue(report.plainText.contains("Application Support: \(directory.path)"))
         XCTAssertTrue(report.plainText.contains("Latest Message: availability.updated"))
     }
+
+    func testReportIncludesParserDiagnosticsRows() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ZacksBarDiagnosticsTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = try AppSupportStore(directory: directory)
+        let message = NativeMessage(
+            schemaVersion: 1,
+            messageId: "parser-1",
+            type: "parser.diagnostics",
+            sentAt: Date(timeIntervalSince1970: 1_787_680_800),
+            source: "content-script",
+            payload: [
+                "vueRootFound": .bool(true),
+                "scheduleTableFound": .bool(true),
+                "rowCount": .number(2),
+                "slotCount": .number(8),
+                "availableSlotCount": .number(1)
+            ]
+        )
+        try store.appendEvent(message)
+
+        let report = try store.makeDiagnosticReport(
+            nativeHostManifestPath: directory.appendingPathComponent("com.zacksbar.native.json"),
+            now: message.sentAt
+        )
+
+        XCTAssertEqual(report.value(for: "Parser Vue Root"), "found")
+        XCTAssertEqual(report.value(for: "Parser Table"), "found")
+        XCTAssertEqual(report.value(for: "Parser Rows"), "2")
+        XCTAssertEqual(report.value(for: "Parser Slots"), "8")
+        XCTAssertEqual(report.value(for: "Parser Available Slots"), "1")
+    }
 }

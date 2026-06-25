@@ -86,6 +86,7 @@ final class AppModel: ObservableObject {
             latestAvailability: message.type == "availability.updated" ? message : nil,
             latestCaptcha: message.type == "captcha.detected" ? message : nil,
             latestHealth: message.type == "health.ping" ? message : nil,
+            latestParserDiagnostics: message.type == "parser.diagnostics" ? message : nil,
             latestMessageType: message.type
         )
         apply(state.menuState)

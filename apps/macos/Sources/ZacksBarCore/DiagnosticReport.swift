@@ -61,6 +61,15 @@ public extension AppSupportStore {
         if let alert = menuState.latestAlert {
             rows.append(DiagnosticRow(label: "Menu Alert", value: alert))
         }
+        if let parser = state?.latestParserDiagnostics {
+            rows.append(contentsOf: [
+                DiagnosticRow(label: "Parser Vue Root", value: parser.payload["vueRootFound"]?.foundValue ?? "unknown"),
+                DiagnosticRow(label: "Parser Table", value: parser.payload["scheduleTableFound"]?.foundValue ?? "unknown"),
+                DiagnosticRow(label: "Parser Rows", value: parser.payload["rowCount"]?.displayValue ?? "unknown"),
+                DiagnosticRow(label: "Parser Slots", value: parser.payload["slotCount"]?.displayValue ?? "unknown"),
+                DiagnosticRow(label: "Parser Available Slots", value: parser.payload["availableSlotCount"]?.displayValue ?? "unknown")
+            ])
+        }
 
         return DiagnosticReport(
             generatedAt: now,
@@ -75,5 +84,26 @@ public extension AppSupportStore {
             return "missing"
         }
         return "\(size.intValue) bytes"
+    }
+}
+
+private extension JSONValue {
+    var foundValue: String? {
+        guard case .bool(let value) = self else { return nil }
+        return value ? "found" : "missing"
+    }
+
+    var displayValue: String? {
+        switch self {
+        case .number(let value):
+            let intValue = Int(value)
+            return value == Double(intValue) ? String(intValue) : String(value)
+        case .string(let value):
+            return value
+        case .bool(let value):
+            return value ? "true" : "false"
+        default:
+            return nil
+        }
     }
 }

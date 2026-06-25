@@ -19,6 +19,7 @@ final class SetupChecklistTests: XCTestCase {
         XCTAssertEqual(checklist.value(for: "Native Host Executable"), "ready")
         XCTAssertEqual(checklist.value(for: "Native Host Manifest"), "missing")
         XCTAssertEqual(checklist.value(for: "Latest Browser State"), "waiting")
+        XCTAssertEqual(checklist.value(for: "Parser Diagnostics"), "waiting")
         XCTAssertFalse(checklist.isReady)
     }
 
@@ -52,6 +53,41 @@ final class SetupChecklistTests: XCTestCase {
         XCTAssertEqual(checklist.value(for: "Native Host Executable"), "ready")
         XCTAssertEqual(checklist.value(for: "Native Host Manifest"), "installed")
         XCTAssertEqual(checklist.value(for: "Latest Browser State"), "health.ping")
+        XCTAssertEqual(checklist.value(for: "Parser Diagnostics"), "waiting")
+        XCTAssertFalse(checklist.isReady)
+    }
+
+    func testChecklistShowsParserDiagnosticsWhenParserMessageExists() throws {
+        let directory = try makeTemporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = try AppSupportStore(directory: directory)
+        let hostURL = directory.appendingPathComponent("zacksbar-native-host")
+        FileManager.default.createFile(atPath: hostURL.path, contents: Data())
+        let manifestURL = directory.appendingPathComponent("com.zacksbar.native.json")
+        _ = try NativeHostInstaller(manifestURL: manifestURL).install(
+            nativeHostExecutable: hostURL,
+            extensionID: try ChromeExtensionID("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        )
+        try store.appendEvent(NativeMessage(
+            schemaVersion: 1,
+            messageId: "parser-1",
+            type: "parser.diagnostics",
+            sentAt: Date(timeIntervalSince1970: 1_787_680_800),
+            source: "content-script",
+            payload: [
+                "scheduleTableFound": .bool(true),
+                "slotCount": .number(8)
+            ]
+        ))
+
+        let checklist = try store.makeSetupChecklist(
+            extensionID: try ChromeExtensionID("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+            nativeHostExecutable: hostURL,
+            manifestURL: manifestURL
+        )
+
+        XCTAssertEqual(checklist.value(for: "Latest Browser State"), "parser.diagnostics")
+        XCTAssertEqual(checklist.value(for: "Parser Diagnostics"), "8 slots")
         XCTAssertTrue(checklist.isReady)
     }
 

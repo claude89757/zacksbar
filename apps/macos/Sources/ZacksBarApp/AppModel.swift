@@ -29,6 +29,22 @@ final class AppModel: ObservableObject {
         apply(state.menuState)
     }
 
+    func makeDiagnosticReport() -> DiagnosticReport {
+        if let report = try? store?.makeDiagnosticReport() {
+            return report
+        }
+        return DiagnosticReport(
+            summary: "Store unavailable",
+            rows: [
+                DiagnosticRow(label: "Application Support", value: "unavailable"),
+                DiagnosticRow(label: "Latest State", value: "unavailable"),
+                DiagnosticRow(label: "Native Events", value: "unavailable"),
+                DiagnosticRow(label: "Native Host Manifest", value: "unknown"),
+                DiagnosticRow(label: "Latest Message", value: "none")
+            ]
+        )
+    }
+
     func handle(message: NativeMessage) {
         let state = LatestAppState(
             updatedAt: message.sentAt,

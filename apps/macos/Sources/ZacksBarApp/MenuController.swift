@@ -4,6 +4,7 @@ import AppKit
 final class MenuController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let model: AppModel
+    private var diagnosticsWindowController: DiagnosticsWindowController?
 
     init(model: AppModel) {
         self.model = model
@@ -25,7 +26,9 @@ final class MenuController: NSObject {
         menu.addItem(refreshItem)
         menu.addItem(NSMenuItem(title: "Create watch rule from current page", action: nil, keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Pause monitoring for 30 minutes", action: nil, keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Settings and diagnostics...", action: nil, keyEquivalent: ""))
+        let diagnosticsItem = NSMenuItem(title: "Settings and diagnostics...", action: #selector(openDiagnostics(_:)), keyEquivalent: ",")
+        diagnosticsItem.target = self
+        menu.addItem(diagnosticsItem)
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
@@ -34,5 +37,15 @@ final class MenuController: NSObject {
     @objc private func refreshLatestState(_ sender: Any?) {
         model.reloadLatestState()
         rebuildMenu()
+    }
+
+    @objc private func openDiagnostics(_ sender: Any?) {
+        if diagnosticsWindowController == nil {
+            diagnosticsWindowController = DiagnosticsWindowController(model: model)
+        }
+        diagnosticsWindowController?.refresh()
+        diagnosticsWindowController?.showWindow(nil)
+        diagnosticsWindowController?.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 }

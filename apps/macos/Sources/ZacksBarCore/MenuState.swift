@@ -12,6 +12,10 @@ public struct MenuState: Equatable {
 
 public extension LatestAppState {
     var menuState: MenuState {
+        if latestMessageType == "health.ping", latestAvailability == nil, latestCaptcha == nil, latestParserDiagnostics != nil {
+            return parserMenuState
+        }
+
         switch latestMessageType {
         case "captcha.detected":
             return MenuState(statusText: "Captcha required", latestAlert: "Open captcha page")
@@ -30,17 +34,21 @@ public extension LatestAppState {
         case "health.ping":
             return MenuState(statusText: "Connected")
         case "parser.diagnostics":
-            guard let parser = latestParserDiagnostics else {
-                return MenuState(statusText: "Inspecting page")
-            }
-            if parser.payload["scheduleTableFound"]?.boolValue == false {
-                return MenuState(statusText: "Inspecting page", latestAlert: "Parser table missing")
-            }
-            let slotCount = parser.payload["slotCount"]?.intValue ?? 0
-            return MenuState(statusText: "Inspecting page", latestAlert: "Parser found \(slotCount) slots")
+            return parserMenuState
         default:
             return MenuState(statusText: "Received \(latestMessageType)")
         }
+    }
+
+    private var parserMenuState: MenuState {
+        guard let parser = latestParserDiagnostics else {
+            return MenuState(statusText: "Inspecting page")
+        }
+        if parser.payload["scheduleTableFound"]?.boolValue == false {
+            return MenuState(statusText: "Inspecting page", latestAlert: "Parser table missing")
+        }
+        let slotCount = parser.payload["slotCount"]?.intValue ?? 0
+        return MenuState(statusText: "Inspecting page", latestAlert: "Parser found \(slotCount) slots")
     }
 }
 

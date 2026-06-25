@@ -77,4 +77,40 @@ final class MenuStateTests: XCTestCase {
         XCTAssertEqual(menuState.statusText, "Inspecting page")
         XCTAssertEqual(menuState.latestAlert, "Parser table missing")
     }
+
+    func testMenuStateKeepsParserDiagnosticsVisibleAfterHealthPing() {
+        let parser = NativeMessage(
+            schemaVersion: 1,
+            messageId: "parser-1",
+            type: "parser.diagnostics",
+            sentAt: Date(timeIntervalSince1970: 1_787_680_800),
+            source: "content-script",
+            payload: [
+                "scheduleTableFound": .bool(false),
+                "slotCount": .number(0)
+            ]
+        )
+        let health = NativeMessage(
+            schemaVersion: 1,
+            messageId: "health-1",
+            type: "health.ping",
+            sentAt: Date(timeIntervalSince1970: 1_787_680_801),
+            source: "service-worker",
+            payload: [
+                "component": .string("zacksbar-companion"),
+                "version": .string("0.1.0")
+            ]
+        )
+        let state = LatestAppState(
+            updatedAt: health.sentAt,
+            latestHealth: health,
+            latestParserDiagnostics: parser,
+            latestMessageType: "health.ping"
+        )
+
+        let menuState = state.menuState
+
+        XCTAssertEqual(menuState.statusText, "Inspecting page")
+        XCTAssertEqual(menuState.latestAlert, "Parser table missing")
+    }
 }

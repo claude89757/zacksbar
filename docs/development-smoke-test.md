@@ -50,6 +50,7 @@ Expected result:
    - Native Host Executable is `ready`.
    - Native Host Manifest is `installed`.
    - Browser Companion is `waiting` until Chrome connects, then shows the loaded companion version.
+   - Pending Browser Commands is `0 pending` before any queued browser command.
 
 Script fallback:
 
@@ -75,7 +76,9 @@ Script fallback:
 9. If a captcha appears, confirm the menu reports manual attention and macOS shows a `ZacksBar needs captcha` notification.
 10. Click a notification with a page URL and confirm it opens the ydmap page in Chrome when Chrome is installed.
 11. Click `Reload Browser Extension` in `Setup Assistant...`.
-12. Reload the ydmap page and confirm `Browser Companion` still shows the expected version after Chrome reconnects.
+12. Confirm `Pending Browser Commands` shows `1 pending: extension.reload`.
+13. Reload the ydmap page and confirm `Browser Companion` still shows the expected version after Chrome reconnects.
+14. Refresh `Setup Assistant...` and confirm `Pending Browser Commands` returns to `0 pending`.
 
 ## 6. Exercise Alert Settings
 

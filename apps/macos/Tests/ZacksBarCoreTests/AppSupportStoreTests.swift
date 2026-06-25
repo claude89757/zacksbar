@@ -135,6 +135,39 @@ final class AppSupportStoreTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: store.commandsFile.path))
     }
 
+    func testReadPendingCommandsDoesNotDrainQueue() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ZacksBarStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = try AppSupportStore(directory: directory)
+        let reload = commandMessage(id: "command-1", type: "extension.reload")
+        let tabOpen = commandMessage(id: "command-2", type: "tab.open")
+
+        try store.appendCommand(reload)
+        try store.appendCommand(tabOpen)
+
+        XCTAssertEqual(try store.readPendingCommands(), [reload, tabOpen])
+        XCTAssertTrue(FileManager.default.fileExists(atPath: store.commandsFile.path))
+        XCTAssertEqual(try store.drainCommands(), [reload, tabOpen])
+    }
+
+    func testReadPendingCommandsSkipsMalformedLines() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ZacksBarStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = try AppSupportStore(directory: directory)
+        let valid = commandMessage(id: "command-1", type: "extension.reload")
+        var contents = Data("not-json\n".utf8)
+        contents.append(try JSONEncoder.zacksBar.encode(valid))
+        contents.append(Data("\n".utf8))
+        try contents.write(to: store.commandsFile)
+
+        XCTAssertEqual(try store.readPendingCommands(), [valid])
+        XCTAssertTrue(FileManager.default.fileExists(atPath: store.commandsFile.path))
+    }
+
     private func commandMessage(id: String, type: String) -> NativeMessage {
         NativeMessage(
             schemaVersion: 1,

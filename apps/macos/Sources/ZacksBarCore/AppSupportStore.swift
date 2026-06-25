@@ -86,10 +86,19 @@ public final class AppSupportStore {
         try appendLine(data, to: commandsFile)
     }
 
+    public func readPendingCommands() throws -> [NativeMessage] {
+        guard FileManager.default.fileExists(atPath: commandsFile.path) else { return [] }
+        return try decodeCommands(from: Data(contentsOf: commandsFile))
+    }
+
     public func drainCommands() throws -> [NativeMessage] {
         guard FileManager.default.fileExists(atPath: commandsFile.path) else { return [] }
         let data = try Data(contentsOf: commandsFile)
         try FileManager.default.removeItem(at: commandsFile)
+        return try decodeCommands(from: data)
+    }
+
+    private func decodeCommands(from data: Data) throws -> [NativeMessage] {
         return String(decoding: data, as: UTF8.self)
             .split(separator: "\n", omittingEmptySubsequences: true)
             .compactMap { line in

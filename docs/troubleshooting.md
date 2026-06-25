@@ -42,6 +42,7 @@ The extension ID must be the unpacked extension ID shown by Chrome. Chrome Nativ
 - If it shows `waiting`, reload the ydmap page so the extension reconnects to the native host.
 - If it shows `reload <old> -> <expected>`, click `Reload Browser Extension`.
 - Reload the ydmap page after queuing the command; the command is delivered on the next browser-to-native message.
+- Check `Pending Browser Commands`; `0 pending` means the native host already sent queued commands back to Chrome.
 - If it still does not update, open `chrome://extensions`, confirm Developer mode is enabled, and click Reload on `ZacksBar Companion`.
 - Inspect `~/Library/Application Support/ZacksBar/native-commands.jsonl` only while debugging; it is a short-lived local command queue and should normally be drained after Chrome reconnects.
 

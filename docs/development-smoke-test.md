@@ -9,6 +9,8 @@ npm test
 cd apps/macos
 swift test
 swift build
+cd ../..
+./scripts/build-macos-app.sh
 ```
 
 Expected result:
@@ -17,6 +19,7 @@ Expected result:
 - Protocol fixtures validate against JSON schemas.
 - Swift tests pass, including latest-state persistence, watch-rule persistence, setup checklist, diagnostics, menu-state summarization, notification decisions, and app notification routing.
 - `ZacksBarApp` and `zacksbar-native-host` build.
+- `apps/macos/.build/debug/ZacksBar.app` is packaged with both executables under `Contents/MacOS`.
 
 ## 2. Load The Chrome Extension
 
@@ -29,8 +32,7 @@ Expected result:
 ## 3. Start The App
 
 ```bash
-cd apps/macos
-swift run ZacksBarApp
+open apps/macos/.build/debug/ZacksBar.app
 ```
 
 Expected result:
@@ -55,7 +57,7 @@ Expected result:
 Script fallback:
 
 ```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/ZacksBar.app/Contents/MacOS/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ```
 
 ## 5. Exercise Browser Messaging

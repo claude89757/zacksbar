@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test extensions/chrome/test/*.test.js && node scripts/validate-protocol.mjs",
+    "test": "node --test extensions/chrome/test/*.test.js scripts/test/*.test.js && node scripts/validate-protocol.mjs",
     "test:protocol": "node scripts/validate-protocol.mjs"
   },
   "engines": {

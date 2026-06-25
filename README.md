@@ -40,9 +40,11 @@ Run Swift checks:
 cd apps/macos
 swift test
 swift build
+cd ../..
+./scripts/build-macos-app.sh
 ```
 
-Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then open `Setup Assistant...` from the menu bar item. Paste the Chrome extension ID and choose `Install Native Host`. The setup assistant also shows the loaded browser companion version and can queue a `Reload Browser Extension` command for the next Chrome native messaging connection.
+Load the Chrome extension from `extensions/chrome`, start `apps/macos/.build/debug/ZacksBar.app`, then open `Setup Assistant...` from the menu bar item. Paste the Chrome extension ID and choose `Install Native Host`. The setup assistant also shows the loaded browser companion version and can queue a `Reload Browser Extension` command for the next Chrome native messaging connection.
 
 The app asks macOS for notification permission on launch. Captcha notifications and matching availability notifications include the latest supported ydmap page URL; clicking the notification opens it in Chrome when Chrome is installed.
 
@@ -51,7 +53,7 @@ Use `Alert Settings...` from the menu bar item to change the primary availabilit
 The script remains available as a development fallback:
 
 ```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "<chrome-extension-id>"
+./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/ZacksBar.app/Contents/MacOS/zacksbar-native-host" "<chrome-extension-id>"
 ```
 
 See [docs/development-smoke-test.md](docs/development-smoke-test.md) for the full local smoke test.

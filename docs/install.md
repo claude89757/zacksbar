@@ -1,10 +1,9 @@
 # Install ZacksBar Development Build
 
-1. Build the macOS package:
+1. Build the macOS debug app bundle:
 
    ```bash
-   cd apps/macos
-   swift build
+   ./scripts/build-macos-app.sh
    ```
 
 2. Load `extensions/chrome` as an unpacked extension in `chrome://extensions`.
@@ -14,8 +13,7 @@
 4. Run the app:
 
    ```bash
-   cd apps/macos
-   swift run ZacksBarApp
+   open apps/macos/.build/debug/ZacksBar.app
    ```
 
 5. Open `Setup Assistant...` from the ZacksBar menu.
@@ -41,5 +39,5 @@
 Install the native host manifest directly:
 
 ```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/ZacksBar.app/Contents/MacOS/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ```

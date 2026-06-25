@@ -15,13 +15,15 @@ Use Copy Report when sharing an issue. The report includes local paths and statu
 
 ## Chrome Cannot Connect To Native Host
 
-Check that the native host manifest exists:
+Open `Setup Assistant...`, paste the extension ID from `chrome://extensions`, and choose `Install Native Host`.
+
+Then check that the native host manifest exists:
 
 ```bash
 ls "$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.zacksbar.native.json"
 ```
 
-Reinstall it with the extension ID from `chrome://extensions`:
+Script fallback:
 
 ```bash
 ./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

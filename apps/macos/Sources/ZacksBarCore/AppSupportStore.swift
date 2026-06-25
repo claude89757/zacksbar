@@ -5,6 +5,7 @@ public struct LatestAppState: Codable, Equatable {
     public var latestAvailability: NativeMessage?
     public var latestCaptcha: NativeMessage?
     public var latestHealth: NativeMessage?
+    public var latestParserDiagnostics: NativeMessage?
     public var latestMessageType: String
 
     public init(
@@ -12,12 +13,14 @@ public struct LatestAppState: Codable, Equatable {
         latestAvailability: NativeMessage? = nil,
         latestCaptcha: NativeMessage? = nil,
         latestHealth: NativeMessage? = nil,
+        latestParserDiagnostics: NativeMessage? = nil,
         latestMessageType: String
     ) {
         self.updatedAt = updatedAt
         self.latestAvailability = latestAvailability
         self.latestCaptcha = latestCaptcha
         self.latestHealth = latestHealth
+        self.latestParserDiagnostics = latestParserDiagnostics
         self.latestMessageType = latestMessageType
     }
 }
@@ -74,7 +77,7 @@ public final class AppSupportStore {
     }
 
     private func updateLatestState(with message: NativeMessage) throws {
-        guard ["availability.updated", "captcha.detected", "health.ping"].contains(message.type) else {
+        guard ["availability.updated", "captcha.detected", "health.ping", "parser.diagnostics"].contains(message.type) else {
             return
         }
 
@@ -92,6 +95,8 @@ public final class AppSupportStore {
             state.latestCaptcha = message
         case "health.ping":
             state.latestHealth = message
+        case "parser.diagnostics":
+            state.latestParserDiagnostics = message
         default:
             break
         }

@@ -9,6 +9,13 @@ final class NativeHostInstallerTests: XCTestCase {
         XCTAssertThrowsError(try ChromeExtensionID("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1"))
     }
 
+    func testDevelopmentCompanionExtensionIDMatchesManifestKey() {
+        XCTAssertEqual(
+            ChromeExtensionID.zacksBarCompanionDevelopment.rawValue,
+            "nfcmelgclmhkneckkebppdnmbnjpjlho"
+        )
+    }
+
     func testInstallWritesManifestWithAllowedOrigin() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ZacksBarInstallerTests-\(UUID().uuidString)", isDirectory: true)

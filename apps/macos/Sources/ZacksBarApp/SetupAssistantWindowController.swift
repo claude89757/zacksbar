@@ -44,7 +44,8 @@ final class SetupAssistantWindowController: NSWindowController {
 
         let extensionIDLabel = NSTextField(labelWithString: "Chrome Extension ID")
         extensionIDLabel.font = .systemFont(ofSize: 12, weight: .semibold)
-        extensionIDField.placeholderString = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        extensionIDField.stringValue = ChromeExtensionID.zacksBarCompanionDevelopment.rawValue
+        extensionIDField.placeholderString = ChromeExtensionID.zacksBarCompanionDevelopment.rawValue
         extensionIDField.font = .monospacedSystemFont(ofSize: 13, weight: .regular)
         extensionIDField.target = self
         extensionIDField.action = #selector(refreshFromField(_:))

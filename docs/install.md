@@ -8,7 +8,13 @@
 
 2. Load `extensions/chrome` as an unpacked extension in `chrome://extensions`.
 
-3. Copy the unpacked extension ID from Chrome.
+   If Chrome was previously loaded from a `.worktrees/.../extensions/chrome` path, remove that unpacked extension first and load the repository root `extensions/chrome` path once.
+
+3. Confirm Chrome shows the stable development extension ID:
+
+   ```text
+   nfcmelgclmhkneckkebppdnmbnjpjlho
+   ```
 
 4. Run the app:
 
@@ -18,11 +24,11 @@
 
 5. Open `Setup Assistant...` from the ZacksBar menu.
 
-6. Paste the Chrome extension ID and choose `Install Native Host`.
+6. Choose `Install Native Host`. The extension ID field is pre-filled for the development companion.
 
 7. Refresh the setup assistant. The checklist should show:
 
-   - Chrome Extension ID: the pasted extension ID.
+   - Chrome Extension ID: `nfcmelgclmhkneckkebppdnmbnjpjlho`.
    - Native Host Executable: `ready`.
    - Native Host Manifest: `installed`.
    - Browser Companion: the loaded companion version after Chrome connects.
@@ -39,5 +45,5 @@
 Install the native host manifest directly:
 
 ```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/ZacksBar.app/Contents/MacOS/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+./scripts/install-native-host.sh
 ```

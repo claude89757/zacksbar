@@ -3,6 +3,7 @@
   "name": "ZacksBar Companion",
   "version": "0.1.0",
   "description": "Connects ydmap tennis court pages to ZacksBar.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0USjVfT49xX0D5PD94MfedxGXfkx5art1i/wKMRfhBBjAvakdWlz1FxNiPFVnd19jMX5GfOSYUzcjCtoSoFzttLd6WoLzhaurIO+MrtjYHuY0J2GS6yhlk2jTc4Ek+/VPmp+kD9hWYYJpeRRuNlLcf4WCf9HnYJRxhPHBP1/Tn4I+3+/4RvXhbmHmddhQOUzfo9HUhnwiNk7k+feIhzY+PPyGsm1HKa5VNO8t9KgEpvBhbeWCY87WZFZqCpsU0fgifoxp6GBNUcKy6FIIhAvjDA1JFnDArll2yR+LMb9xc6Ua4OKGhTrKFaj/hLVpCPw2VTsu+Q3YpXklzK5v32B9wIDAQAB",
   "permissions": ["nativeMessaging", "tabs", "storage"],
   "host_permissions": ["https://*.ydmap.cn/booking/*"],
   "background": {

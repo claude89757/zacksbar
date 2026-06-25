@@ -89,4 +89,28 @@ final class DiagnosticReportTests: XCTestCase {
         XCTAssertEqual(report.value(for: "Parser Slots"), "8")
         XCTAssertEqual(report.value(for: "Parser Available Slots"), "1")
     }
+
+    func testReportIncludesWatchRuleRows() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ZacksBarDiagnosticsTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = try AppSupportStore(directory: directory)
+        try store.writeWatchRules([
+            WatchRule(
+                id: "primary",
+                dateMode: .tomorrow,
+                start: "18:00",
+                end: "20:00",
+                courtKeywords: ["1号", "室内"]
+            )
+        ])
+
+        let report = try store.makeDiagnosticReport(
+            nativeHostManifestPath: directory.appendingPathComponent("com.zacksbar.native.json")
+        )
+
+        XCTAssertEqual(report.value(for: "Watch Rules"), "1 rule")
+        XCTAssertEqual(report.value(for: "Primary Watch Rule"), "tomorrow 18:00-20:00 1号, 室内")
+    }
 }

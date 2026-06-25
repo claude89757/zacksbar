@@ -10,6 +10,8 @@ Check these rows first:
 - `Latest State`: should show a byte size after Chrome sends a supported message.
 - `Native Events`: should show a byte size after any native message arrives.
 - `Latest Message`: should be `health.ping`, `parser.diagnostics`, `availability.updated`, or `captcha.detected`.
+- `Watch Rules`: should show at least `1 rule`.
+- `Primary Watch Rule`: should show the date mode, time range, and court filter used by availability alerts.
 - `Parser Vue Root`: should be `found` after the ydmap app mounts.
 - `Parser Table`: should be `found` on a supported booking schedule page.
 - `Parser Slots`: should be greater than `0` after schedule data loads.
@@ -57,11 +59,14 @@ cd ../..
 ## Availability Alerts Do Not Match
 
 - Verify the watch rule date and time range use the same labels as the parsed page snapshot.
+- Open `Alert Settings...` and confirm Start, End, and Court keywords match what you expect.
 - Prefer continuous time ranges that match slot boundaries shown on the ydmap page.
 - The current default watch rule is 19:00-21:00 on the latest bookable day.
 - Open diagnostics and confirm `Latest Message` is `availability.updated`.
+- Open diagnostics and confirm `Primary Watch Rule` matches the setting you saved.
 - If `Latest Message` is only `parser.diagnostics`, check `Parser Table`, `Parser Rows`, and `Parser Slots` to see where parsing stopped.
 - Inspect `~/Library/Application Support/ZacksBar/latest-state.json` if the menu status does not match the page.
+- Inspect `~/Library/Application Support/ZacksBar/watch-rules.json` if the saved alert settings do not match the UI.
 
 ## Notification Click Does Not Open Chrome
 

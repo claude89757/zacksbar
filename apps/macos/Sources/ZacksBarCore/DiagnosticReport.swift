@@ -58,6 +58,11 @@ public extension AppSupportStore {
             DiagnosticRow(label: "Native Host Manifest", value: fileStatus(nativeHostManifestPath)),
             DiagnosticRow(label: "Latest Message", value: state?.latestMessageType ?? "none")
         ]
+        let watchRules = (try? readWatchRules()) ?? WatchRule.defaultRules
+        rows.append(DiagnosticRow(label: "Watch Rules", value: "\(watchRules.count) \(watchRules.count == 1 ? "rule" : "rules")"))
+        if let primaryRule = watchRules.first {
+            rows.append(DiagnosticRow(label: "Primary Watch Rule", value: primaryRule.diagnosticSummary))
+        }
         if let alert = menuState.latestAlert {
             rows.append(DiagnosticRow(label: "Menu Alert", value: alert))
         }
@@ -84,6 +89,13 @@ public extension AppSupportStore {
             return "missing"
         }
         return "\(size.intValue) bytes"
+    }
+}
+
+private extension WatchRule {
+    var diagnosticSummary: String {
+        let courts = courtKeywords.isEmpty ? "any court" : courtKeywords.joined(separator: ", ")
+        return "\(dateMode.rawValue) \(start)-\(end) \(courts)"
     }
 }
 

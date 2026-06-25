@@ -42,7 +42,9 @@ swift test
 swift build
 ```
 
-Load the Chrome extension from `extensions/chrome`, then install the native host manifest with:
+Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then open `Setup Assistant...` from the menu bar item. Paste the Chrome extension ID and choose `Install Native Host`.
+
+The script remains available as a development fallback:
 
 ```bash
 ./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "<chrome-extension-id>"

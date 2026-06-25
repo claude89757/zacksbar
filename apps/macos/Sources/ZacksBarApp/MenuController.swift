@@ -5,6 +5,7 @@ final class MenuController: NSObject {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let model: AppModel
     private var diagnosticsWindowController: DiagnosticsWindowController?
+    private var setupAssistantWindowController: SetupAssistantWindowController?
 
     init(model: AppModel) {
         self.model = model
@@ -24,6 +25,9 @@ final class MenuController: NSObject {
         let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshLatestState(_:)), keyEquivalent: "r")
         refreshItem.target = self
         menu.addItem(refreshItem)
+        let setupItem = NSMenuItem(title: "Setup Assistant...", action: #selector(openSetupAssistant(_:)), keyEquivalent: "")
+        setupItem.target = self
+        menu.addItem(setupItem)
         menu.addItem(NSMenuItem(title: "Create watch rule from current page", action: nil, keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "Pause monitoring for 30 minutes", action: nil, keyEquivalent: ""))
         let diagnosticsItem = NSMenuItem(title: "Settings and diagnostics...", action: #selector(openDiagnostics(_:)), keyEquivalent: ",")
@@ -46,6 +50,21 @@ final class MenuController: NSObject {
         diagnosticsWindowController?.refresh()
         diagnosticsWindowController?.showWindow(nil)
         diagnosticsWindowController?.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func openSetupAssistant(_ sender: Any?) {
+        if setupAssistantWindowController == nil {
+            setupAssistantWindowController = SetupAssistantWindowController(
+                model: model,
+                openDiagnostics: { [weak self] in
+                    self?.openDiagnostics(nil)
+                }
+            )
+        }
+        setupAssistantWindowController?.refresh()
+        setupAssistantWindowController?.showWindow(nil)
+        setupAssistantWindowController?.window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }

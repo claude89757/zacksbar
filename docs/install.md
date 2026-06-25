@@ -11,17 +11,31 @@
 
 3. Copy the unpacked extension ID from Chrome.
 
-4. Install the native host manifest:
-
-   ```bash
-   ./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-   ```
-
-5. Open a supported ydmap booking page.
-
-6. Run the app:
+4. Run the app:
 
    ```bash
    cd apps/macos
    swift run ZacksBarApp
    ```
+
+5. Open `Setup Assistant...` from the ZacksBar menu.
+
+6. Paste the Chrome extension ID and choose `Install Native Host`.
+
+7. Refresh the setup assistant. The checklist should show:
+
+   - Chrome Extension ID: the pasted extension ID.
+   - Native Host Executable: `ready`.
+   - Native Host Manifest: `installed`.
+
+8. Open a supported ydmap booking page and reload it.
+
+9. Refresh the setup assistant again. `Latest Browser State` should show `health.ping`, `availability.updated`, or `captcha.detected`.
+
+## Script Fallback
+
+Install the native host manifest directly:
+
+```bash
+./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+```

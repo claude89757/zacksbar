@@ -1,6 +1,6 @@
 # Development Smoke Test
 
-Use this checklist after changing the Chrome extension, native host, protocol schemas, latest-state persistence, diagnostics, or menu bar app skeleton.
+Use this checklist after changing the Chrome extension, native host, protocol schemas, latest-state persistence, setup assistant, diagnostics, or menu bar app skeleton.
 
 ## 1. Run Automated Checks
 
@@ -15,7 +15,7 @@ Expected result:
 
 - JavaScript parser and polling tests pass.
 - Protocol fixtures validate against JSON schemas.
-- Swift core tests pass, including latest-state persistence, diagnostics, and menu-state summarization.
+- Swift core tests pass, including latest-state persistence, setup checklist, diagnostics, and menu-state summarization.
 - `ZacksBarApp` and `zacksbar-native-host` build.
 
 ## 2. Load The Chrome Extension
@@ -26,17 +26,7 @@ Expected result:
 4. Select `extensions/chrome`.
 5. Copy the extension ID.
 
-## 3. Install Native Host Manifest
-
-From the repository root:
-
-```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-```
-
-Replace the placeholder value with the unpacked extension ID from Chrome.
-
-## 4. Start The App
+## 3. Start The App
 
 ```bash
 cd apps/macos
@@ -46,7 +36,24 @@ swift run ZacksBarApp
 Expected result:
 
 - A `Z` menu bar item appears.
-- The menu shows app status, setup actions, Refresh, and `Settings and diagnostics...`.
+- The menu shows app status, `Setup Assistant...`, Refresh, and `Settings and diagnostics...`.
+
+## 4. Run Setup Assistant
+
+1. Open `Setup Assistant...`.
+2. Paste the unpacked Chrome extension ID.
+3. Click `Install Native Host`.
+4. Click Refresh.
+5. Confirm:
+   - Chrome Extension ID is the pasted value.
+   - Native Host Executable is `ready`.
+   - Native Host Manifest is `installed`.
+
+Script fallback:
+
+```bash
+./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+```
 
 ## 5. Exercise Browser Messaging
 

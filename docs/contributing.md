@@ -28,6 +28,8 @@ swift build
 
 Run the relevant subset while iterating, then run all checks before opening a pull request.
 
+Native host integration tests set `ZACKSBAR_APP_SUPPORT_DIR` to isolate Application Support state. Do not point this variable at a real user data directory during tests.
+
 ## Change Guidelines
 
 - Add or update protocol fixtures when changing message shapes.

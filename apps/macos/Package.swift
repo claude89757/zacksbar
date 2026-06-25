@@ -14,6 +14,7 @@ let package = Package(
         .executableTarget(name: "ZacksBarNativeHost", dependencies: ["ZacksBarCore"]),
         .executableTarget(name: "ZacksBarApp", dependencies: ["ZacksBarCore"]),
         .testTarget(name: "ZacksBarCoreTests", dependencies: ["ZacksBarCore"]),
+        .testTarget(name: "ZacksBarNativeHostTests", dependencies: ["ZacksBarCore"]),
         .testTarget(name: "ZacksBarAppTests", dependencies: ["ZacksBarApp", "ZacksBarCore"])
     ]
 )

@@ -1,6 +1,8 @@
 (function installZacksBarContent(global) {
   const CAPTCHA_PATTERN = /拖动滑块|向右滑动|请完成.{0,6}验证|完成验证|滑动验证|按住左边滑块/;
   const SCHEMA_VERSION = 1;
+  let lastAvailabilitySignature = null;
+  let lastCaptchaSignature = null;
 
   function redactUrl(rawUrl) {
     try {
@@ -123,7 +125,7 @@
     return false;
   }
 
-  function normalizeAvailability({ venue, pageUrl, dateLabel, courts, rows }) {
+  function normalizeAvailability({ venue, pageUrl, dateLabel, courts, rows, slots }) {
     return {
       venue: venue || 'unknown ydmap venue',
       pageUrl: redactUrl(pageUrl || global.location?.href || ''),
@@ -132,14 +134,13 @@
         id: String(court.id),
         name: String(court.name)
       })) : [],
-      slots: Array.isArray(rows)
-        ? rows.flat().filter(Boolean).map((slot) => ({
+      slots: (Array.isArray(rows) ? rows.flat() : Array.isArray(slots) ? slots : [])
+        .filter(Boolean).map((slot) => ({
             courtId: String(slot.courtId),
             start: String(slot.start),
             end: String(slot.end),
             available: Boolean(slot.available)
           }))
-        : []
     };
   }
 
@@ -179,10 +180,28 @@
     }, 'content-script');
   }
 
+  function sendMessage(message) {
+    global.chrome?.runtime?.sendMessage?.(message);
+  }
+
   function inspectCurrentPage() {
     const bodyText = global.document?.body?.innerText || '';
     if (detectCaptchaFromText(bodyText)) {
-      global.chrome.runtime.sendMessage(buildCaptchaMessage(global.location.href, bodyText));
+      const captcha = buildCaptchaMessage(global.location.href, bodyText);
+      const signature = JSON.stringify(captcha.payload);
+      if (signature !== lastCaptchaSignature) {
+        lastCaptchaSignature = signature;
+        sendMessage(captcha);
+      }
+    }
+
+    const availability = extractYdmapAvailability(global.document, global.location);
+    if (availability && availability.slots.length > 0) {
+      const signature = JSON.stringify(availability);
+      if (signature !== lastAvailabilitySignature) {
+        lastAvailabilitySignature = signature;
+        sendMessage(buildAvailabilityMessage(availability));
+      }
     }
   }
 

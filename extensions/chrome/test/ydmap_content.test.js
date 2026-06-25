@@ -17,9 +17,50 @@ vm.runInContext(source, sandbox);
 const {
   detectCaptchaFromText,
   extractYdmapAvailability,
+  inspectCurrentPage,
   normalizeAvailability,
   selectContinuousRange
 } = sandbox.ZacksBarContent;
+
+function makeYdmapDocument() {
+  const slot19 = {
+    startTime: new Date(2026, 5, 26, 19, 0).getTime(),
+    endTime: new Date(2026, 5, 26, 20, 0).getTime(),
+    status: 'available'
+  };
+  const slot20 = {
+    startTime: new Date(2026, 5, 26, 20, 0).getTime(),
+    endTime: new Date(2026, 5, 26, 21, 0).getTime(),
+    status: 'booked'
+  };
+  const table = {
+    $options: { methods: { onSelect() {} } },
+    _data: { rows: [[slot19], [slot20]] },
+    rows: [[slot19], [slot20]],
+    platformInColumns: [{ venueId: 'court-1', venueName: '1号场' }],
+    isAvailableStatic(cell) {
+      return cell.status === 'available';
+    }
+  };
+  const parent = {
+    $options: { methods: { sure() {}, agreementSure() {} } },
+    _data: {
+      curDate: '2026-06-26',
+      serverData: {
+        dateDataList: [{ day: '2026-06-26', dayName: '6-26' }]
+      }
+    }
+  };
+  const root = { $children: [parent, table] };
+  return {
+    title: '宝安网球馆',
+    body: { innerText: '普通订场页面' },
+    querySelectorAll(selector) {
+      assert.equal(selector, 'body *');
+      return [{ __vue__: { $root: root } }];
+    }
+  };
+}
 
 test('detectCaptchaFromText detects slider captcha copy', () => {
   assert.equal(detectCaptchaFromText('请完成滑动验证后继续'), true);
@@ -58,44 +99,7 @@ test('selectContinuousRange finds adjacent available slots', () => {
 });
 
 test('extractYdmapAvailability reads ydmap vue table state', () => {
-  const slot19 = {
-    startTime: new Date(2026, 5, 26, 19, 0).getTime(),
-    endTime: new Date(2026, 5, 26, 20, 0).getTime(),
-    status: 'available'
-  };
-  const slot20 = {
-    startTime: new Date(2026, 5, 26, 20, 0).getTime(),
-    endTime: new Date(2026, 5, 26, 21, 0).getTime(),
-    status: 'booked'
-  };
-  const table = {
-    $options: { methods: { onSelect() {} } },
-    _data: { rows: [[slot19], [slot20]] },
-    rows: [[slot19], [slot20]],
-    platformInColumns: [{ venueId: 'court-1', venueName: '1号场' }],
-    isAvailableStatic(cell) {
-      return cell.status === 'available';
-    }
-  };
-  const parent = {
-    $options: { methods: { sure() {}, agreementSure() {} } },
-    _data: {
-      curDate: '2026-06-26',
-      serverData: {
-        dateDataList: [{ day: '2026-06-26', dayName: '6-26' }]
-      }
-    }
-  };
-  const root = { $children: [parent, table] };
-  const document = {
-    title: '宝安网球馆',
-    querySelectorAll(selector) {
-      assert.equal(selector, 'body *');
-      return [{ __vue__: { $root: root } }];
-    }
-  };
-
-  const payload = JSON.parse(JSON.stringify(extractYdmapAvailability(document, {
+  const payload = JSON.parse(JSON.stringify(extractYdmapAvailability(makeYdmapDocument(), {
     href: 'https://bawtt.ydmap.cn/booking/schedule/example?token=secret'
   })));
 
@@ -107,4 +111,26 @@ test('extractYdmapAvailability reads ydmap vue table state', () => {
     { courtId: 'court-1', start: '19:00', end: '20:00', available: true },
     { courtId: 'court-1', start: '20:00', end: '21:00', available: false }
   ]);
+});
+
+test('inspectCurrentPage sends one availability update for unchanged snapshot', () => {
+  const messages = [];
+  sandbox.document = makeYdmapDocument();
+  sandbox.location = {
+    href: 'https://bawtt.ydmap.cn/booking/schedule/example?token=secret'
+  };
+  sandbox.chrome = {
+    runtime: {
+      sendMessage(message) {
+        messages.push(JSON.parse(JSON.stringify(message)));
+      }
+    }
+  };
+
+  inspectCurrentPage();
+  inspectCurrentPage();
+
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].type, 'availability.updated');
+  assert.equal(messages[0].payload.slots.length, 2);
 });

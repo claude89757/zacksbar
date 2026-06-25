@@ -88,6 +88,10 @@ final class AppModel: ObservableObject {
         reloadLatestState()
     }
 
+    var primaryWatchRule: WatchRule {
+        rules.first ?? WatchRule.defaultRules[0]
+    }
+
     var nativeHostExecutableURL: URL {
         let executableDirectory = Bundle.main.executableURL?.deletingLastPathComponent()
             ?? URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()

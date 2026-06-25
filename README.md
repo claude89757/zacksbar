@@ -13,7 +13,7 @@ ydmap booking page
   -> Swift macOS menu bar app
 ```
 
-This repository currently contains the product skeleton: protocol schemas, Chrome companion extension scaffolding, Swift core, native host framing, menu bar app skeleton, installer helper, documentation, and CI.
+This repository currently contains the product skeleton plus the first live pipeline: the Chrome companion can read ydmap Vue schedule state, emit deduped availability/captcha events, the native host can persist latest local state, and the menu bar app can display that state.
 
 ## Scope
 
@@ -49,6 +49,12 @@ Load the Chrome extension from `extensions/chrome`, then install the native host
 ```
 
 See [docs/development-smoke-test.md](docs/development-smoke-test.md) for the full local smoke test.
+
+Local native state is written under:
+
+```text
+~/Library/Application Support/ZacksBar/latest-state.json
+```
 
 ## Documentation
 

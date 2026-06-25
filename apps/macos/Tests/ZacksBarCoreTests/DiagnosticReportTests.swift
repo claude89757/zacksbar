@@ -111,6 +111,6 @@ final class DiagnosticReportTests: XCTestCase {
         )
 
         XCTAssertEqual(report.value(for: "Watch Rules"), "1 rule")
-        XCTAssertEqual(report.value(for: "Primary Watch Rule"), "tomorrow 18:00-20:00 1号, 室内")
+        XCTAssertEqual(report.value(for: "Primary Watch Rule"), "18:00-20:00 1号, 室内")
     }
 }

@@ -95,7 +95,7 @@ public extension AppSupportStore {
 private extension WatchRule {
     var diagnosticSummary: String {
         let courts = courtKeywords.isEmpty ? "any court" : courtKeywords.joined(separator: ", ")
-        return "\(dateMode.rawValue) \(start)-\(end) \(courts)"
+        return "\(start)-\(end) \(courts)"
     }
 }
 

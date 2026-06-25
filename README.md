@@ -46,6 +46,8 @@ Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then op
 
 The app asks macOS for notification permission on launch. Captcha notifications and matching availability notifications include the latest supported ydmap page URL; clicking the notification opens it in Chrome when Chrome is installed.
 
+Use `Alert Settings...` from the menu bar item to change the primary availability alert rule. The rule is stored locally and applied immediately after Save.
+
 The script remains available as a development fallback:
 
 ```bash
@@ -57,10 +59,10 @@ See [docs/development-smoke-test.md](docs/development-smoke-test.md) for the ful
 Local native state is written under:
 
 ```text
-~/Library/Application Support/ZacksBar/latest-state.json
+~/Library/Application Support/ZacksBar/
 ```
 
-Use `Settings and diagnostics...` from the menu bar item to inspect local bridge state and copy a report for bug reports.
+Important local files include `latest-state.json` for browser state and `watch-rules.json` for alert settings. Use `Settings and diagnostics...` from the menu bar item to inspect local bridge state and copy a report for bug reports.
 
 ## Documentation
 

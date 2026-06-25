@@ -24,7 +24,7 @@ flowchart LR
 : Shared Swift package code for message framing, app support storage paths, latest state persistence, menu state summarization, watch-rule matching, notification decisions, privacy redaction, and native host manifest generation.
 
 `apps/macos/Sources/ZacksBarApp`
-: Swift menu bar app skeleton. It owns the status item, menu model, latest-state refresh action, setup/diagnostic entry points, macOS notification delivery, and future native settings UI.
+: Swift menu bar app skeleton. It owns the status item, menu model, latest-state refresh action, setup/diagnostic entry points, alert settings UI, macOS notification delivery, and future native settings UI.
 
 `packages/protocol`
 : JSON schemas and fixtures for messages exchanged between Chrome and the native side.
@@ -49,6 +49,12 @@ The macOS app uses `UserNotifications` for user-facing alerts. Core computes pen
 
 Notification clicks are handled inside the macOS app. When a notification contains an action URL, ZacksBar opens it with Chrome by bundle identifier (`com.google.Chrome`), falling back to the user's default browser if Chrome is unavailable.
 
+## Watch Rules
+
+The app currently supports one primary availability watch rule. Users edit it from `Alert Settings...` in the menu bar app. The rule includes date mode, start time, end time, and optional court keywords. Empty court keywords match any court.
+
+Rules are persisted in `watch-rules.json` under Application Support. If the file is missing, ZacksBar uses the default latest-bookable-day rule from 19:00 to 21:00.
+
 ## Local State
 
 The native host writes local app state under:
@@ -61,6 +67,7 @@ Important files:
 
 - `native-events.jsonl`: append-only event log for diagnostics.
 - `latest-state.json`: compact latest availability/captcha/health snapshot for the menu app.
+- `watch-rules.json`: local availability alert settings.
 
 These files are local runtime data and must not be committed.
 

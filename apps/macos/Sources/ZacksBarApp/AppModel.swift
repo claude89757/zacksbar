@@ -5,9 +5,7 @@ import ZacksBarCore
 final class AppModel: ObservableObject {
     @Published var statusText: String = "Waiting for Chrome"
     @Published var latestAlert: String?
-    @Published var rules: [WatchRule] = [
-        WatchRule(id: "default-evening", dateMode: .latestBookable, start: "19:00", end: "21:00", courtKeywords: [])
-    ]
+    @Published var rules: [WatchRule] = WatchRule.defaultRules
 
     private let store: AppSupportStore?
     private let nativeHostInstaller: NativeHostInstaller
@@ -26,6 +24,7 @@ final class AppModel: ObservableObject {
         }
         self.nativeHostInstaller = nativeHostInstaller
         self.notificationDelivery = notificationDelivery ?? NoopNotificationDelivery()
+        self.rules = (try? self.store?.readWatchRules()) ?? WatchRule.defaultRules
         reloadLatestState()
     }
 
@@ -80,6 +79,17 @@ final class AppModel: ObservableObject {
             nativeHostExecutable: nativeHostExecutableURL,
             extensionID: extensionID
         )
+    }
+
+    func savePrimaryWatchRule(_ rule: WatchRule) throws {
+        let nextRules = [rule]
+        try store?.writeWatchRules(nextRules)
+        rules = nextRules
+        reloadLatestState()
+    }
+
+    var primaryWatchRule: WatchRule {
+        rules.first ?? WatchRule.defaultRules[0]
     }
 
     var nativeHostExecutableURL: URL {

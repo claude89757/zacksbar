@@ -30,6 +30,7 @@ public final class AppSupportStore {
     public let eventsFile: URL
     public let commandsFile: URL
     public let latestStateFile: URL
+    public let watchRulesFile: URL
 
     public init(fileManager: FileManager = .default) throws {
         let base = try fileManager.url(
@@ -43,6 +44,7 @@ public final class AppSupportStore {
         eventsFile = directory.appendingPathComponent("native-events.jsonl")
         commandsFile = directory.appendingPathComponent("native-commands.jsonl")
         latestStateFile = directory.appendingPathComponent("latest-state.json")
+        watchRulesFile = directory.appendingPathComponent("watch-rules.json")
     }
 
     public init(directory: URL, fileManager: FileManager = .default) throws {
@@ -51,6 +53,7 @@ public final class AppSupportStore {
         eventsFile = directory.appendingPathComponent("native-events.jsonl")
         commandsFile = directory.appendingPathComponent("native-commands.jsonl")
         latestStateFile = directory.appendingPathComponent("latest-state.json")
+        watchRulesFile = directory.appendingPathComponent("watch-rules.json")
     }
 
     public func appendEvent(_ message: NativeMessage) throws {
@@ -63,6 +66,19 @@ public final class AppSupportStore {
         guard FileManager.default.fileExists(atPath: latestStateFile.path) else { return nil }
         let data = try Data(contentsOf: latestStateFile)
         return try JSONDecoder.zacksBar.decode(LatestAppState.self, from: data)
+    }
+
+    public func readWatchRules() throws -> [WatchRule] {
+        guard FileManager.default.fileExists(atPath: watchRulesFile.path) else {
+            return WatchRule.defaultRules
+        }
+        let data = try Data(contentsOf: watchRulesFile)
+        return try JSONDecoder.zacksBar.decode([WatchRule].self, from: data)
+    }
+
+    public func writeWatchRules(_ rules: [WatchRule]) throws {
+        let data = try JSONEncoder.zacksBar.encode(rules)
+        try data.write(to: watchRulesFile, options: [.atomic])
     }
 
     private func appendLine(_ data: Data, to file: URL) throws {

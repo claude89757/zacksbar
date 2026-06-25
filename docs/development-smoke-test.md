@@ -1,6 +1,6 @@
 # Development Smoke Test
 
-Use this checklist after changing the Chrome extension, parser diagnostics, native host, protocol schemas, latest-state persistence, notifications, setup assistant, diagnostics, or menu bar app skeleton.
+Use this checklist after changing the Chrome extension, parser diagnostics, native host, protocol schemas, latest-state persistence, notifications, watch-rule settings, setup assistant, diagnostics, or menu bar app skeleton.
 
 ## 1. Run Automated Checks
 
@@ -15,7 +15,7 @@ Expected result:
 
 - JavaScript parser, parser diagnostics, and polling tests pass.
 - Protocol fixtures validate against JSON schemas.
-- Swift tests pass, including latest-state persistence, setup checklist, diagnostics, menu-state summarization, notification decisions, and app notification routing.
+- Swift tests pass, including latest-state persistence, watch-rule persistence, setup checklist, diagnostics, menu-state summarization, notification decisions, and app notification routing.
 - `ZacksBarApp` and `zacksbar-native-host` build.
 
 ## 2. Load The Chrome Extension
@@ -37,7 +37,7 @@ Expected result:
 
 - A `Z` menu bar item appears.
 - macOS may ask for notification permission; allow it for local alert testing.
-- The menu shows app status, `Setup Assistant...`, Refresh, and `Settings and diagnostics...`.
+- The menu shows app status, `Setup Assistant...`, `Alert Settings...`, Refresh, and `Settings and diagnostics...`.
 
 ## 4. Run Setup Assistant
 
@@ -74,7 +74,21 @@ Script fallback:
 9. If a captcha appears, confirm the menu reports manual attention and macOS shows a `ZacksBar needs captcha` notification.
 10. Click a notification with a page URL and confirm it opens the ydmap page in Chrome when Chrome is installed.
 
-## 6. Check Diagnostics
+## 6. Exercise Alert Settings
+
+1. Open `Alert Settings...`.
+2. Change Start and End to a range shown on the current page.
+3. Optionally enter court keywords such as `1号, 室内`; leave it empty to match any court.
+4. Click Save.
+5. Confirm local rule state exists:
+
+   ```bash
+   cat "$HOME/Library/Application Support/ZacksBar/watch-rules.json"
+   ```
+
+6. Refresh the menu and confirm future availability notifications follow the saved range.
+
+## 7. Check Diagnostics
 
 1. Open `Settings and diagnostics...` from the ZacksBar menu.
 2. Confirm the window shows:
@@ -83,6 +97,8 @@ Script fallback:
    - Native Events status.
    - Native Host Manifest status.
    - Latest Message.
+   - Watch Rules.
+   - Primary Watch Rule.
    - Parser Vue Root.
    - Parser Table.
    - Parser Rows.
@@ -98,7 +114,7 @@ Parser row interpretation:
 - `Parser Rows: 0` or `Parser Slots: 0`: table was found, but schedule data has not loaded or ydmap markup/runtime changed.
 - `Parser Available Slots: 0`: parsing worked, but no slots are currently available.
 
-## 7. Inspect Boundaries
+## 8. Inspect Boundaries
 
 Before considering the smoke test complete, confirm:
 
@@ -106,3 +122,4 @@ Before considering the smoke test complete, confirm:
 - URLs in fixtures and logs do not contain query strings with private identifiers.
 - The app does not bypass captcha or submit a booking automatically.
 - `latest-state.json` remains local runtime data and is not tracked by Git.
+- `watch-rules.json` remains local user settings and is not tracked by Git.

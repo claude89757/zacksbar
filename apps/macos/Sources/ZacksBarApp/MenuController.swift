@@ -6,6 +6,7 @@ final class MenuController: NSObject {
     private let model: AppModel
     private var diagnosticsWindowController: DiagnosticsWindowController?
     private var setupAssistantWindowController: SetupAssistantWindowController?
+    private var watchRuleSettingsWindowController: WatchRuleSettingsWindowController?
 
     init(model: AppModel) {
         self.model = model
@@ -28,7 +29,9 @@ final class MenuController: NSObject {
         let setupItem = NSMenuItem(title: "Setup Assistant...", action: #selector(openSetupAssistant(_:)), keyEquivalent: "")
         setupItem.target = self
         menu.addItem(setupItem)
-        menu.addItem(NSMenuItem(title: "Create watch rule from current page", action: nil, keyEquivalent: ""))
+        let alertSettingsItem = NSMenuItem(title: "Alert Settings...", action: #selector(openAlertSettings(_:)), keyEquivalent: "")
+        alertSettingsItem.target = self
+        menu.addItem(alertSettingsItem)
         menu.addItem(NSMenuItem(title: "Pause monitoring for 30 minutes", action: nil, keyEquivalent: ""))
         let diagnosticsItem = NSMenuItem(title: "Settings and diagnostics...", action: #selector(openDiagnostics(_:)), keyEquivalent: ",")
         diagnosticsItem.target = self
@@ -65,6 +68,21 @@ final class MenuController: NSObject {
         setupAssistantWindowController?.refresh()
         setupAssistantWindowController?.showWindow(nil)
         setupAssistantWindowController?.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func openAlertSettings(_ sender: Any?) {
+        if watchRuleSettingsWindowController == nil {
+            watchRuleSettingsWindowController = WatchRuleSettingsWindowController(
+                model: model,
+                onSave: { [weak self] in
+                    self?.rebuildMenu()
+                }
+            )
+        }
+        watchRuleSettingsWindowController?.refresh()
+        watchRuleSettingsWindowController?.showWindow(nil)
+        watchRuleSettingsWindowController?.window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }

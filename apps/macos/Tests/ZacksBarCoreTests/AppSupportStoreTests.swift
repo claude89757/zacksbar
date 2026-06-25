@@ -65,4 +65,39 @@ final class AppSupportStoreTests: XCTestCase {
         XCTAssertEqual(state.latestParserDiagnostics?.payload["slotCount"], .number(8))
         XCTAssertNil(state.latestAvailability)
     }
+
+    func testReadWatchRulesReturnsDefaultWhenFileIsMissing() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ZacksBarStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = try AppSupportStore(directory: directory)
+
+        let rules = try store.readWatchRules()
+
+        XCTAssertEqual(rules, [
+            WatchRule(id: "default-evening", dateMode: .latestBookable, start: "19:00", end: "21:00", courtKeywords: [])
+        ])
+        XCTAssertFalse(FileManager.default.fileExists(atPath: store.watchRulesFile.path))
+    }
+
+    func testWriteAndReadWatchRulesRoundTrips() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ZacksBarStoreTests-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = try AppSupportStore(directory: directory)
+        let rule = WatchRule(
+            id: "custom-evening",
+            dateMode: .tomorrow,
+            start: "18:00",
+            end: "20:00",
+            courtKeywords: ["1号"]
+        )
+
+        try store.writeWatchRules([rule])
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: store.watchRulesFile.path))
+        XCTAssertEqual(try store.readWatchRules(), [rule])
+    }
 }

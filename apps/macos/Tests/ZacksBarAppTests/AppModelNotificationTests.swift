@@ -40,6 +40,46 @@ final class AppModelNotificationTests: XCTestCase {
         ])
     }
 
+    func testInitializesWithPersistedWatchRules() throws {
+        let store = try temporaryStore()
+        let rule = WatchRule(
+            id: "custom-evening",
+            dateMode: .tomorrow,
+            start: "18:00",
+            end: "20:00",
+            courtKeywords: ["1号"]
+        )
+        try store.writeWatchRules([rule])
+
+        let model = AppModel(store: store, notificationDelivery: RecordingNotificationDelivery())
+
+        XCTAssertEqual(model.rules, [rule])
+    }
+
+    func testSaveWatchRulePersistsAndUpdatesNotifications() throws {
+        let store = try temporaryStore()
+        let delivery = RecordingNotificationDelivery()
+        let model = AppModel(store: store, notificationDelivery: delivery)
+        let rule = WatchRule(
+            id: "primary",
+            dateMode: .latestBookable,
+            start: "18:00",
+            end: "20:00",
+            courtKeywords: ["1号"]
+        )
+
+        try model.savePrimaryWatchRule(rule)
+        model.handle(message: availabilityMessage(start: "18:00", middle: "19:00", end: "20:00"))
+
+        XCTAssertEqual(try store.readWatchRules(), [rule])
+        XCTAssertEqual(delivery.delivered.last, PendingNotification(
+            id: "availability:availability-1:primary:1号场:18:00-20:00",
+            title: "Court available",
+            body: "宝安网球馆 6-26 1号场 18:00-20:00",
+            actionURL: "https://bawtt.ydmap.cn/booking/schedule/example"
+        ))
+    }
+
     private func temporaryStore() throws -> AppSupportStore {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ZacksBarAppTests-\(UUID().uuidString)", isDirectory: true)
@@ -49,7 +89,7 @@ final class AppModelNotificationTests: XCTestCase {
         return try AppSupportStore(directory: directory)
     }
 
-    private func availabilityMessage() -> NativeMessage {
+    private func availabilityMessage(start: String = "19:00", middle: String = "20:00", end: String = "21:00") -> NativeMessage {
         NativeMessage(
             schemaVersion: 1,
             messageId: "availability-1",
@@ -66,14 +106,14 @@ final class AppModelNotificationTests: XCTestCase {
                 "slots": .array([
                     .object([
                         "courtId": .string("court-1"),
-                        "start": .string("19:00"),
-                        "end": .string("20:00"),
+                        "start": .string(start),
+                        "end": .string(middle),
                         "available": .bool(true)
                     ]),
                     .object([
                         "courtId": .string("court-1"),
-                        "start": .string("20:00"),
-                        "end": .string("21:00"),
+                        "start": .string(middle),
+                        "end": .string(end),
                         "available": .bool(true)
                     ])
                 ])

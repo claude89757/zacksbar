@@ -68,3 +68,9 @@ public struct WatchRule: Codable, Equatable, Identifiable {
         return nil
     }
 }
+
+public extension WatchRule {
+    static let defaultRules = [
+        WatchRule(id: "default-evening", dateMode: .latestBookable, start: "19:00", end: "21:00", courtKeywords: [])
+    ]
+}

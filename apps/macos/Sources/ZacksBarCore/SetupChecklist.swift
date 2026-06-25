@@ -38,6 +38,8 @@ public extension AppSupportStore {
         let manifestReady = FileManager.default.fileExists(atPath: manifestURL.path)
         let latestState = try readLatestState()
         let latestMessage = latestState?.latestMessageType
+        let parserDiagnostics = latestState?.latestParserDiagnostics
+        let parserSlotCount = parserDiagnostics?.payload["slotCount"]?.intValue
 
         return SetupChecklist(steps: [
             SetupStep(
@@ -59,7 +61,19 @@ public extension AppSupportStore {
                 label: "Latest Browser State",
                 value: latestMessage ?? "waiting",
                 isComplete: latestMessage != nil
+            ),
+            SetupStep(
+                label: "Parser Diagnostics",
+                value: parserSlotCount.map { "\($0) slots" } ?? "waiting",
+                isComplete: parserDiagnostics != nil
             )
         ])
+    }
+}
+
+private extension JSONValue {
+    var intValue: Int? {
+        if case .number(let value) = self { return Int(value) }
+        return nil
     }
 }

@@ -29,6 +29,15 @@ public extension LatestAppState {
             )
         case "health.ping":
             return MenuState(statusText: "Connected")
+        case "parser.diagnostics":
+            guard let parser = latestParserDiagnostics else {
+                return MenuState(statusText: "Inspecting page")
+            }
+            if parser.payload["scheduleTableFound"]?.boolValue == false {
+                return MenuState(statusText: "Inspecting page", latestAlert: "Parser table missing")
+            }
+            let slotCount = parser.payload["slotCount"]?.intValue ?? 0
+            return MenuState(statusText: "Inspecting page", latestAlert: "Parser found \(slotCount) slots")
         default:
             return MenuState(statusText: "Received \(latestMessageType)")
         }
@@ -53,6 +62,11 @@ private extension JSONValue {
 
     var boolValue: Bool? {
         if case .bool(let value) = self { return value }
+        return nil
+    }
+
+    var intValue: Int? {
+        if case .number(let value) = self { return Int(value) }
         return nil
     }
 }

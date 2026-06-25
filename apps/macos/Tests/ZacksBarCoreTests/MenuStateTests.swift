@@ -53,4 +53,28 @@ final class MenuStateTests: XCTestCase {
         XCTAssertEqual(menuState.statusText, "Captcha required")
         XCTAssertEqual(menuState.latestAlert, "Open captcha page")
     }
+
+    func testMenuStateSummarizesParserDiagnosticsWhenNoAvailabilityExists() {
+        let parser = NativeMessage(
+            schemaVersion: 1,
+            messageId: "parser-1",
+            type: "parser.diagnostics",
+            sentAt: Date(timeIntervalSince1970: 1_787_680_800),
+            source: "content-script",
+            payload: [
+                "scheduleTableFound": .bool(false),
+                "slotCount": .number(0)
+            ]
+        )
+        let state = LatestAppState(
+            updatedAt: parser.sentAt,
+            latestParserDiagnostics: parser,
+            latestMessageType: "parser.diagnostics"
+        )
+
+        let menuState = state.menuState
+
+        XCTAssertEqual(menuState.statusText, "Inspecting page")
+        XCTAssertEqual(menuState.latestAlert, "Parser table missing")
+    }
 }

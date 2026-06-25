@@ -1,6 +1,6 @@
 # Development Smoke Test
 
-Use this checklist after changing the Chrome extension, native host, protocol schemas, latest-state persistence, setup assistant, diagnostics, or menu bar app skeleton.
+Use this checklist after changing the Chrome extension, parser diagnostics, native host, protocol schemas, latest-state persistence, setup assistant, diagnostics, or menu bar app skeleton.
 
 ## 1. Run Automated Checks
 
@@ -13,7 +13,7 @@ swift build
 
 Expected result:
 
-- JavaScript parser and polling tests pass.
+- JavaScript parser, parser diagnostics, and polling tests pass.
 - Protocol fixtures validate against JSON schemas.
 - Swift core tests pass, including latest-state persistence, setup checklist, diagnostics, and menu-state summarization.
 - `ZacksBarApp` and `zacksbar-native-host` build.
@@ -67,8 +67,9 @@ Script fallback:
    ```
 
 5. Click Refresh in the ZacksBar menu.
-6. If availability was parsed, confirm the menu shows `Monitoring <date>` and an availability alert.
-7. If a captcha appears, confirm the menu reports manual attention.
+6. Open `Setup Assistant...` and confirm `Parser Diagnostics` changes from `waiting` to a slot count after the page is inspected.
+7. If availability was parsed, confirm the menu shows `Monitoring <date>` and an availability alert.
+8. If a captcha appears, confirm the menu reports manual attention.
 
 ## 6. Check Diagnostics
 
@@ -79,8 +80,20 @@ Script fallback:
    - Native Events status.
    - Native Host Manifest status.
    - Latest Message.
+   - Parser Vue Root.
+   - Parser Table.
+   - Parser Rows.
+   - Parser Slots.
+   - Parser Available Slots.
 3. Click Refresh after reloading the ydmap page.
 4. Click Copy Report and paste it into a text editor to confirm it includes the same rows.
+
+Parser row interpretation:
+
+- `Parser Vue Root: missing`: the ydmap app has not mounted yet, or the page is outside the supported app shell.
+- `Parser Table: missing`: Vue mounted, but the known schedule table component was not found.
+- `Parser Rows: 0` or `Parser Slots: 0`: table was found, but schedule data has not loaded or ydmap markup/runtime changed.
+- `Parser Available Slots: 0`: parsing worked, but no slots are currently available.
 
 ## 7. Inspect Boundaries
 

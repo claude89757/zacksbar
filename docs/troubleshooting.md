@@ -9,7 +9,10 @@ Check these rows first:
 - `Native Host Manifest`: should show a byte size, not `missing`.
 - `Latest State`: should show a byte size after Chrome sends a supported message.
 - `Native Events`: should show a byte size after any native message arrives.
-- `Latest Message`: should be `health.ping`, `availability.updated`, or `captcha.detected`.
+- `Latest Message`: should be `health.ping`, `parser.diagnostics`, `availability.updated`, or `captcha.detected`.
+- `Parser Vue Root`: should be `found` after the ydmap app mounts.
+- `Parser Table`: should be `found` on a supported booking schedule page.
+- `Parser Slots`: should be greater than `0` after schedule data loads.
 
 Use Copy Report when sharing an issue. The report includes local paths and status labels, but not cookies or credentials.
 
@@ -54,6 +57,7 @@ cd ../..
 - Verify the watch rule date and time range use the same labels as the parsed page snapshot.
 - Prefer continuous time ranges that match slot boundaries shown on the ydmap page.
 - Open diagnostics and confirm `Latest Message` is `availability.updated`.
+- If `Latest Message` is only `parser.diagnostics`, check `Parser Table`, `Parser Rows`, and `Parser Slots` to see where parsing stopped.
 - Inspect `~/Library/Application Support/ZacksBar/latest-state.json` if the menu status does not match the page.
 
 ## Tests

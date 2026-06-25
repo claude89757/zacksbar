@@ -20,7 +20,7 @@ Use Copy Report when sharing an issue. The report includes local paths and statu
 
 ## Chrome Cannot Connect To Native Host
 
-Open `Setup Assistant...`, paste the extension ID from `chrome://extensions`, and choose `Install Native Host`.
+Open `Setup Assistant...` and choose `Install Native Host`. The development extension ID should already be filled as `nfcmelgclmhkneckkebppdnmbnjpjlho`.
 
 Then check that the native host manifest exists:
 
@@ -31,10 +31,12 @@ ls "$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts/com.zac
 Script fallback:
 
 ```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+./scripts/install-native-host.sh
 ```
 
-The extension ID must be the unpacked extension ID shown by Chrome. Chrome Native Messaging rejects all other origins.
+The extension ID must match the unpacked extension ID shown by Chrome. The development companion keeps this ID stable through the `key` field in `extensions/chrome/manifest.json`.
+
+If Chrome shows a different ID, remove the old unpacked extension and load the repository root `extensions/chrome` path again. Old `.worktrees/.../extensions/chrome` paths should not be used for the stable local setup.
 
 ## Browser Companion Version Is Stale
 
@@ -48,13 +50,11 @@ The extension ID must be the unpacked extension ID shown by Chrome. Chrome Nativ
 
 ## Native Host Path Is Wrong
 
-Build the Swift package and reinstall the manifest with the absolute host path:
+Build the app bundle and reinstall the manifest with the bundled native host path:
 
 ```bash
-cd apps/macos
-swift build
-cd ../..
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+./scripts/build-macos-app.sh
+./scripts/install-native-host.sh
 ```
 
 ## Captcha Alerts Do Not Appear

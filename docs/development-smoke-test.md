@@ -27,7 +27,7 @@ Expected result:
 2. Enable Developer mode.
 3. Choose Load unpacked.
 4. Select `extensions/chrome`.
-5. Copy the extension ID.
+5. Confirm the extension ID is `nfcmelgclmhkneckkebppdnmbnjpjlho`.
 
 ## 3. Start The App
 
@@ -44,11 +44,11 @@ Expected result:
 ## 4. Run Setup Assistant
 
 1. Open `Setup Assistant...`.
-2. Paste the unpacked Chrome extension ID.
+2. Confirm the Chrome extension ID field is already filled with `nfcmelgclmhkneckkebppdnmbnjpjlho`.
 3. Click `Install Native Host`.
 4. Click Refresh.
 5. Confirm:
-   - Chrome Extension ID is the pasted value.
+   - Chrome Extension ID is `nfcmelgclmhkneckkebppdnmbnjpjlho`.
    - Native Host Executable is `ready`.
    - Native Host Manifest is `installed`.
    - Browser Companion is `waiting` until Chrome connects, then shows the loaded companion version.
@@ -57,7 +57,7 @@ Expected result:
 Script fallback:
 
 ```bash
-./scripts/install-native-host.sh "$(pwd)/apps/macos/.build/debug/ZacksBar.app/Contents/MacOS/zacksbar-native-host" "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+./scripts/install-native-host.sh
 ```
 
 ## 5. Exercise Browser Messaging

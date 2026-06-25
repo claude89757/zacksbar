@@ -1,6 +1,8 @@
 import Foundation
 
 public struct ChromeExtensionID: RawRepresentable, Equatable, Codable {
+    public static let zacksBarCompanionDevelopment = ChromeExtensionID(rawValue: "nfcmelgclmhkneckkebppdnmbnjpjlho")
+
     public let rawValue: String
 
     public init(_ value: String) throws {

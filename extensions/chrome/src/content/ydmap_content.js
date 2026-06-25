@@ -3,6 +3,7 @@
   const SCHEMA_VERSION = 1;
   let lastAvailabilitySignature = null;
   let lastCaptchaSignature = null;
+  let lastParserDiagnosticsSignature = null;
 
   function redactUrl(rawUrl) {
     try {
@@ -57,6 +58,12 @@
 
   function allVueComponents(documentRef = global.document) {
     return walkVueComponents(findVueRoot(documentRef));
+  }
+
+  function vueContext(documentRef = global.document) {
+    const root = findVueRoot(documentRef);
+    const components = walkVueComponents(root);
+    return { root, components };
   }
 
   function findScheduleTable(documentRef = global.document) {
@@ -180,11 +187,56 @@
     }, 'content-script');
   }
 
+  function buildParserDiagnosticsPayload(documentRef = global.document, locationRef = global.location) {
+    const { root, components } = vueContext(documentRef);
+    const parent = components.find((vm) => (
+      methodsOf(vm).sure && methodsOf(vm).agreementSure
+    )) || null;
+    const table = components.find((vm) => (
+      methodsOf(vm).onSelect && (vm._data?.rows || vm.rows)
+    )) || null;
+    const rows = table?._data?.rows || table?.rows || [];
+    const rowCount = Array.isArray(rows) ? rows.length : 0;
+    const columnCount = rowCount > 0
+      ? Math.max(...rows.map((row) => Array.isArray(row) ? row.length : 0))
+      : 0;
+    const slotRows = table ? extractYdmapAvailability(documentRef, locationRef)?.slots || [] : [];
+    const availableSlotCount = slotRows.filter((slot) => slot.available).length;
+
+    return {
+      pageUrl: redactUrl(locationRef?.href || ''),
+      vueRootFound: Boolean(root),
+      componentCount: components.length,
+      scheduleParentFound: Boolean(parent),
+      scheduleTableFound: Boolean(table),
+      rowCount,
+      columnCount,
+      courtCount: table?.platformInColumns?.length || columnCount,
+      slotCount: slotRows.length,
+      availableSlotCount
+    };
+  }
+
+  function buildParserDiagnosticsMessage(documentRef = global.document, locationRef = global.location) {
+    return createMessage(
+      'parser.diagnostics',
+      buildParserDiagnosticsPayload(documentRef, locationRef),
+      'content-script'
+    );
+  }
+
   function sendMessage(message) {
     global.chrome?.runtime?.sendMessage?.(message);
   }
 
   function inspectCurrentPage() {
+    const diagnostics = buildParserDiagnosticsMessage(global.document, global.location);
+    const diagnosticsSignature = JSON.stringify(diagnostics.payload);
+    if (diagnosticsSignature !== lastParserDiagnosticsSignature) {
+      lastParserDiagnosticsSignature = diagnosticsSignature;
+      sendMessage(diagnostics);
+    }
+
     const bodyText = global.document?.body?.innerText || '';
     if (detectCaptchaFromText(bodyText)) {
       const captcha = buildCaptchaMessage(global.location.href, bodyText);
@@ -248,6 +300,8 @@
   }
 
   global.ZacksBarContent = {
+    buildParserDiagnosticsMessage,
+    buildParserDiagnosticsPayload,
     detectCaptchaFromText,
     extractYdmapAvailability,
     findScheduleParent,

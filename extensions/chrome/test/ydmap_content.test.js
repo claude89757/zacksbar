@@ -15,6 +15,7 @@ vm.createContext(sandbox);
 vm.runInContext(source, sandbox);
 
 const {
+  buildParserDiagnosticsPayload,
   detectCaptchaFromText,
   extractYdmapAvailability,
   inspectCurrentPage,
@@ -113,6 +114,44 @@ test('extractYdmapAvailability reads ydmap vue table state', () => {
   ]);
 });
 
+test('buildParserDiagnosticsPayload reports missing vue state', () => {
+  const document = {
+    title: 'empty',
+    body: { innerText: '' },
+    querySelectorAll() {
+      return [];
+    }
+  };
+
+  const diagnostics = buildParserDiagnosticsPayload(document, {
+    href: 'https://bawtt.ydmap.cn/booking/schedule/example?token=secret'
+  });
+
+  assert.equal(diagnostics.pageUrl, 'https://bawtt.ydmap.cn/booking/schedule/example');
+  assert.equal(diagnostics.vueRootFound, false);
+  assert.equal(diagnostics.componentCount, 0);
+  assert.equal(diagnostics.scheduleParentFound, false);
+  assert.equal(diagnostics.scheduleTableFound, false);
+  assert.equal(diagnostics.rowCount, 0);
+  assert.equal(diagnostics.slotCount, 0);
+});
+
+test('buildParserDiagnosticsPayload reports vue table counts', () => {
+  const diagnostics = buildParserDiagnosticsPayload(makeYdmapDocument(), {
+    href: 'https://bawtt.ydmap.cn/booking/schedule/example?token=secret'
+  });
+
+  assert.equal(diagnostics.vueRootFound, true);
+  assert.equal(diagnostics.componentCount, 3);
+  assert.equal(diagnostics.scheduleParentFound, true);
+  assert.equal(diagnostics.scheduleTableFound, true);
+  assert.equal(diagnostics.rowCount, 2);
+  assert.equal(diagnostics.columnCount, 1);
+  assert.equal(diagnostics.courtCount, 1);
+  assert.equal(diagnostics.slotCount, 2);
+  assert.equal(diagnostics.availableSlotCount, 1);
+});
+
 test('inspectCurrentPage sends one availability update for unchanged snapshot', () => {
   const messages = [];
   sandbox.document = makeYdmapDocument();
@@ -130,7 +169,9 @@ test('inspectCurrentPage sends one availability update for unchanged snapshot', 
   inspectCurrentPage();
   inspectCurrentPage();
 
-  assert.equal(messages.length, 1);
-  assert.equal(messages[0].type, 'availability.updated');
-  assert.equal(messages[0].payload.slots.length, 2);
+  assert.equal(messages.length, 2);
+  assert.equal(messages[0].type, 'parser.diagnostics');
+  assert.equal(messages[0].payload.slotCount, 2);
+  assert.equal(messages[1].type, 'availability.updated');
+  assert.equal(messages[1].payload.slots.length, 2);
 });

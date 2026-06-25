@@ -51,14 +51,23 @@ cd ../..
 - Confirm the companion extension is enabled in `chrome://extensions`.
 - Reload the ydmap booking page after loading or updating the extension.
 - Confirm Chrome can connect to `com.zacksbar.native`.
+- Confirm macOS notification permission is enabled for ZacksBar in System Settings.
+- Open diagnostics and confirm `Latest Message` is `captcha.detected`.
 
 ## Availability Alerts Do Not Match
 
 - Verify the watch rule date and time range use the same labels as the parsed page snapshot.
 - Prefer continuous time ranges that match slot boundaries shown on the ydmap page.
+- The current default watch rule is 19:00-21:00 on the latest bookable day.
 - Open diagnostics and confirm `Latest Message` is `availability.updated`.
 - If `Latest Message` is only `parser.diagnostics`, check `Parser Table`, `Parser Rows`, and `Parser Slots` to see where parsing stopped.
 - Inspect `~/Library/Application Support/ZacksBar/latest-state.json` if the menu status does not match the page.
+
+## Notification Click Does Not Open Chrome
+
+- Confirm the notification included a page URL by checking `latest-state.json` for `payload.pageUrl`.
+- Confirm Google Chrome is installed. ZacksBar targets Chrome by bundle identifier and falls back to the default browser if Chrome is unavailable.
+- If no browser opens, quit and restart `ZacksBarApp` so it can become the notification center delegate again.
 
 ## Tests
 

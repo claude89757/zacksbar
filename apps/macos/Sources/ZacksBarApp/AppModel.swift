@@ -11,14 +11,21 @@ final class AppModel: ObservableObject {
 
     private let store: AppSupportStore?
     private let nativeHostInstaller: NativeHostInstaller
+    private let notificationDelivery: NotificationDelivering
+    private var deliveredNotificationIDs: Set<String> = []
 
-    init(store: AppSupportStore? = nil, nativeHostInstaller: NativeHostInstaller = NativeHostInstaller()) {
+    init(
+        store: AppSupportStore? = nil,
+        nativeHostInstaller: NativeHostInstaller = NativeHostInstaller(),
+        notificationDelivery: NotificationDelivering? = nil
+    ) {
         if let store {
             self.store = store
         } else {
             self.store = try? AppSupportStore()
         }
         self.nativeHostInstaller = nativeHostInstaller
+        self.notificationDelivery = notificationDelivery ?? NoopNotificationDelivery()
         reloadLatestState()
     }
 
@@ -29,6 +36,7 @@ final class AppModel: ObservableObject {
             return
         }
         apply(state.menuState)
+        evaluateNotifications(for: state)
     }
 
     func makeDiagnosticReport() -> DiagnosticReport {
@@ -90,11 +98,24 @@ final class AppModel: ObservableObject {
             latestMessageType: message.type
         )
         apply(state.menuState)
+        evaluateNotifications(for: state)
     }
 
     private func apply(_ menuState: MenuState) {
         statusText = menuState.statusText
         latestAlert = menuState.latestAlert
+    }
+
+    private func evaluateNotifications(for state: LatestAppState) {
+        let pending = NotificationDecision.pendingNotifications(
+            for: state,
+            rules: rules,
+            deliveredNotificationIDs: deliveredNotificationIDs
+        )
+        for notification in pending {
+            notificationDelivery.deliver(notification)
+            deliveredNotificationIDs.insert(notification.id)
+        }
     }
 
 }

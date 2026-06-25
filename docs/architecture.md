@@ -21,10 +21,10 @@ flowchart LR
 : Command-line native host entrypoint used by Chrome Native Messaging. It reads length-prefixed JSON messages from stdin and writes length-prefixed JSON responses to stdout.
 
 `apps/macos/Sources/ZacksBarCore`
-: Shared Swift package code for message framing, app support storage paths, latest state persistence, menu state summarization, watch-rule matching, privacy redaction, and native host manifest generation.
+: Shared Swift package code for message framing, app support storage paths, latest state persistence, menu state summarization, watch-rule matching, notification decisions, privacy redaction, and native host manifest generation.
 
 `apps/macos/Sources/ZacksBarApp`
-: Swift menu bar app skeleton. It owns the status item, menu model, latest-state refresh action, setup/diagnostic entry points, and future native settings UI.
+: Swift menu bar app skeleton. It owns the status item, menu model, latest-state refresh action, setup/diagnostic entry points, macOS notification delivery, and future native settings UI.
 
 `packages/protocol`
 : JSON schemas and fixtures for messages exchanged between Chrome and the native side.
@@ -33,10 +33,21 @@ flowchart LR
 
 1. The content script inspects supported booking pages on a polling interval.
 2. Captcha-like page text emits `captcha.detected`.
-3. Ready ydmap Vue schedule state emits deduped `availability.updated`.
-4. The service worker adds tab context and forwards the message through `chrome.runtime.connectNative`.
-5. The native host decodes the Chrome Native Messaging frame, appends `native-events.jsonl`, and updates `latest-state.json`.
-6. The menu bar app reads `latest-state.json` at launch and on Refresh to update status.
+3. Page parser health emits deduped `parser.diagnostics`.
+4. Ready ydmap Vue schedule state emits deduped `availability.updated`.
+5. The service worker adds tab context and forwards the message through `chrome.runtime.connectNative`.
+6. The native host decodes the Chrome Native Messaging frame, appends `native-events.jsonl`, and updates `latest-state.json`.
+7. The menu bar app reads `latest-state.json` at launch and on Refresh to update status and evaluate notification rules.
+
+## Notifications
+
+The macOS app uses `UserNotifications` for user-facing alerts. Core computes pending notifications from `LatestAppState`, current watch rules, and session-level delivered notification IDs. The app delivers each pending notification once per app session.
+
+- `captcha.detected` triggers `ZacksBar needs captcha`.
+- A matching continuous watch-rule range triggers `Court available`.
+- Parser diagnostics stay diagnostic-only.
+
+Notification clicks are handled inside the macOS app. When a notification contains an action URL, ZacksBar opens it with Chrome by bundle identifier (`com.google.Chrome`), falling back to the user's default browser if Chrome is unavailable.
 
 ## Local State
 

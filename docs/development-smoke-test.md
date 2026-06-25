@@ -1,6 +1,6 @@
 # Development Smoke Test
 
-Use this checklist after changing the Chrome extension, parser diagnostics, native host, protocol schemas, latest-state persistence, setup assistant, diagnostics, or menu bar app skeleton.
+Use this checklist after changing the Chrome extension, parser diagnostics, native host, protocol schemas, latest-state persistence, notifications, setup assistant, diagnostics, or menu bar app skeleton.
 
 ## 1. Run Automated Checks
 
@@ -15,7 +15,7 @@ Expected result:
 
 - JavaScript parser, parser diagnostics, and polling tests pass.
 - Protocol fixtures validate against JSON schemas.
-- Swift core tests pass, including latest-state persistence, setup checklist, diagnostics, and menu-state summarization.
+- Swift tests pass, including latest-state persistence, setup checklist, diagnostics, menu-state summarization, notification decisions, and app notification routing.
 - `ZacksBarApp` and `zacksbar-native-host` build.
 
 ## 2. Load The Chrome Extension
@@ -36,6 +36,7 @@ swift run ZacksBarApp
 Expected result:
 
 - A `Z` menu bar item appears.
+- macOS may ask for notification permission; allow it for local alert testing.
 - The menu shows app status, `Setup Assistant...`, Refresh, and `Settings and diagnostics...`.
 
 ## 4. Run Setup Assistant
@@ -69,7 +70,9 @@ Script fallback:
 5. Click Refresh in the ZacksBar menu.
 6. Open `Setup Assistant...` and confirm `Parser Diagnostics` changes from `waiting` to a slot count after the page is inspected.
 7. If availability was parsed, confirm the menu shows `Monitoring <date>` and an availability alert.
-8. If a captcha appears, confirm the menu reports manual attention.
+8. If the default 19:00-21:00 watch rule matches a continuous available range, confirm macOS shows a `Court available` notification.
+9. If a captcha appears, confirm the menu reports manual attention and macOS shows a `ZacksBar needs captcha` notification.
+10. Click a notification with a page URL and confirm it opens the ydmap page in Chrome when Chrome is installed.
 
 ## 6. Check Diagnostics
 

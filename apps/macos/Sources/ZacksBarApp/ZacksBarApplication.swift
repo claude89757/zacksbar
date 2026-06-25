@@ -6,7 +6,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuController: MenuController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        model = AppModel()
+        let notificationDelivery = MacNotificationDelivery()
+        notificationDelivery.requestAuthorization()
+        model = AppModel(notificationDelivery: notificationDelivery)
         menuController = MenuController(model: model)
         NSApp.setActivationPolicy(.accessory)
     }

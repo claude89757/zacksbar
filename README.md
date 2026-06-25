@@ -13,7 +13,7 @@ ydmap booking page
   -> Swift macOS menu bar app
 ```
 
-This repository currently contains the product skeleton plus the first live pipeline: the Chrome companion can read ydmap Vue schedule state, emit deduped parser/availability/captcha events, the native host can persist latest local state, and the menu bar app can display and diagnose that state.
+This repository currently contains the product skeleton plus the first live pipeline: the Chrome companion can read ydmap Vue schedule state, emit deduped parser/availability/captcha events, the native host can persist latest local state, and the menu bar app can display, diagnose, and notify on that state.
 
 ## Scope
 
@@ -43,6 +43,8 @@ swift build
 ```
 
 Load the Chrome extension from `extensions/chrome`, start `ZacksBarApp`, then open `Setup Assistant...` from the menu bar item. Paste the Chrome extension ID and choose `Install Native Host`.
+
+The app asks macOS for notification permission on launch. Captcha notifications and matching availability notifications include the latest supported ydmap page URL; clicking the notification opens it in Chrome when Chrome is installed.
 
 The script remains available as a development fallback:
 

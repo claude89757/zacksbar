@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "messageId": "fixture-parser-1",
+  "type": "parser.diagnostics",
+  "sentAt": "2026-06-25T12:00:30Z",
+  "source": "content-script",
+  "payload": {
+    "pageUrl": "https://bawtt.ydmap.cn/booking/schedule/example",
+    "vueRootFound": true,
+    "componentCount": 12,
+    "scheduleParentFound": true,
+    "scheduleTableFound": true,
+    "rowCount": 2,
+    "columnCount": 2,
+    "courtCount": 2,
+    "slotCount": 4,
+    "availableSlotCount": 1
+  }
+}

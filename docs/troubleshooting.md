@@ -1,5 +1,18 @@
 # Troubleshooting
 
+## Start With Diagnostics
+
+Open `Settings and diagnostics...` from the ZacksBar menu.
+
+Check these rows first:
+
+- `Native Host Manifest`: should show a byte size, not `missing`.
+- `Latest State`: should show a byte size after Chrome sends a supported message.
+- `Native Events`: should show a byte size after any native message arrives.
+- `Latest Message`: should be `health.ping`, `availability.updated`, or `captcha.detected`.
+
+Use Copy Report when sharing an issue. The report includes local paths and status labels, but not cookies or credentials.
+
 ## Chrome Cannot Connect To Native Host
 
 Check that the native host manifest exists:
@@ -38,7 +51,8 @@ cd ../..
 
 - Verify the watch rule date and time range use the same labels as the parsed page snapshot.
 - Prefer continuous time ranges that match slot boundaries shown on the ydmap page.
-- Use the diagnostic view once available to compare the latest parsed snapshot with the configured rule.
+- Open diagnostics and confirm `Latest Message` is `availability.updated`.
+- Inspect `~/Library/Application Support/ZacksBar/latest-state.json` if the menu status does not match the page.
 
 ## Tests
 

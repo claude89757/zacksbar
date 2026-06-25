@@ -1,6 +1,6 @@
 # Development Smoke Test
 
-Use this checklist after changing the Chrome extension, native host, protocol schemas, latest-state persistence, or menu bar app skeleton.
+Use this checklist after changing the Chrome extension, native host, protocol schemas, latest-state persistence, diagnostics, or menu bar app skeleton.
 
 ## 1. Run Automated Checks
 
@@ -15,7 +15,7 @@ Expected result:
 
 - JavaScript parser and polling tests pass.
 - Protocol fixtures validate against JSON schemas.
-- Swift core tests pass, including latest-state persistence and menu-state summarization.
+- Swift core tests pass, including latest-state persistence, diagnostics, and menu-state summarization.
 - `ZacksBarApp` and `zacksbar-native-host` build.
 
 ## 2. Load The Chrome Extension
@@ -46,7 +46,7 @@ swift run ZacksBarApp
 Expected result:
 
 - A `Z` menu bar item appears.
-- The menu shows app status, setup actions, and a Refresh item.
+- The menu shows app status, setup actions, Refresh, and `Settings and diagnostics...`.
 
 ## 5. Exercise Browser Messaging
 
@@ -63,7 +63,19 @@ Expected result:
 6. If availability was parsed, confirm the menu shows `Monitoring <date>` and an availability alert.
 7. If a captcha appears, confirm the menu reports manual attention.
 
-## 6. Inspect Boundaries
+## 6. Check Diagnostics
+
+1. Open `Settings and diagnostics...` from the ZacksBar menu.
+2. Confirm the window shows:
+   - Application Support path.
+   - Latest State status.
+   - Native Events status.
+   - Native Host Manifest status.
+   - Latest Message.
+3. Click Refresh after reloading the ydmap page.
+4. Click Copy Report and paste it into a text editor to confirm it includes the same rows.
+
+## 7. Inspect Boundaries
 
 Before considering the smoke test complete, confirm:
 

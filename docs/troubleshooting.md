@@ -36,6 +36,15 @@ Script fallback:
 
 The extension ID must be the unpacked extension ID shown by Chrome. Chrome Native Messaging rejects all other origins.
 
+## Browser Companion Version Is Stale
+
+- Open `Setup Assistant...` and check `Browser Companion`.
+- If it shows `waiting`, reload the ydmap page so the extension reconnects to the native host.
+- If it shows `reload <old> -> <expected>`, click `Reload Browser Extension`.
+- Reload the ydmap page after queuing the command; the command is delivered on the next browser-to-native message.
+- If it still does not update, open `chrome://extensions`, confirm Developer mode is enabled, and click Reload on `ZacksBar Companion`.
+- Inspect `~/Library/Application Support/ZacksBar/native-commands.jsonl` only while debugging; it is a short-lived local command queue and should normally be drained after Chrome reconnects.
+
 ## Native Host Path Is Wrong
 
 Build the Swift package and reinstall the manifest with the absolute host path:

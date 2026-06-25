@@ -62,6 +62,13 @@ final class AppModelNotificationTests: XCTestCase {
         let model = AppModel(store: store, notificationDelivery: delivery)
         let rule = WatchRule(
             id: "primary",
+            dateMode: .tomorrow,
+            start: "18:00",
+            end: "20:00",
+            courtKeywords: ["1号"]
+        )
+        let normalizedRule = WatchRule(
+            id: "primary",
             dateMode: .latestBookable,
             start: "18:00",
             end: "20:00",
@@ -71,7 +78,8 @@ final class AppModelNotificationTests: XCTestCase {
         try model.savePrimaryWatchRule(rule)
         model.handle(message: availabilityMessage(start: "18:00", middle: "19:00", end: "20:00"))
 
-        XCTAssertEqual(try store.readWatchRules(), [rule])
+        XCTAssertEqual(model.rules, [normalizedRule])
+        XCTAssertEqual(try store.readWatchRules(), [normalizedRule])
         XCTAssertEqual(delivery.delivered.last, PendingNotification(
             id: "availability:availability-1:primary:1号场:18:00-20:00",
             title: "Court available",

@@ -82,7 +82,7 @@ final class AppModel: ObservableObject {
     }
 
     func savePrimaryWatchRule(_ rule: WatchRule) throws {
-        let nextRules = [rule]
+        let nextRules = [rule.timeRangeOnly]
         try store?.writeWatchRules(nextRules)
         rules = nextRules
         reloadLatestState()
@@ -128,4 +128,16 @@ final class AppModel: ObservableObject {
         }
     }
 
+}
+
+private extension WatchRule {
+    var timeRangeOnly: WatchRule {
+        WatchRule(
+            id: id,
+            dateMode: .latestBookable,
+            start: start,
+            end: end,
+            courtKeywords: courtKeywords
+        )
+    }
 }

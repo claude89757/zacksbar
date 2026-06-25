@@ -6,7 +6,7 @@ Let users configure the availability alert rule from the macOS menu bar instead 
 
 ## Scope
 
-This iteration supports one primary watch rule. The rule contains date mode, start time, end time, and optional court keywords. It is saved locally and used immediately by notification matching. Multi-rule management, page-derived rule drafts, and advanced recurrence are future work.
+This iteration supports one primary watch rule. The user-facing rule contains start time, end time, and optional court keywords. It is saved locally and used immediately by notification matching. Multi-rule management, page-derived rule drafts, and advanced recurrence are future work.
 
 ## Approach
 
@@ -18,7 +18,6 @@ This iteration supports one primary watch rule. The rule contains date mode, sta
 
 The settings window is optimized for low input:
 
-- Date mode is a popup with common choices: latest bookable day, tomorrow, weekend, specific day.
 - Start and end are small text fields prefilled from the current rule.
 - Court keywords is one text field that accepts comma-separated values. Empty means any court.
 - Save persists the rule and updates the in-memory notification matcher immediately.
@@ -40,6 +39,8 @@ The window displays the current saved rule summary so users can verify what will
   }
 ]
 ```
+
+`dateMode` is retained as a compatibility field in the stored model and is fixed to `latestBookable` by app saves. It is not shown in the settings UI.
 
 ## Validation
 

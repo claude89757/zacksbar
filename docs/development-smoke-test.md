@@ -77,16 +77,17 @@ Script fallback:
 ## 6. Exercise Alert Settings
 
 1. Open `Alert Settings...`.
-2. Change Start and End to a range shown on the current page.
-3. Optionally enter court keywords such as `1号, 室内`; leave it empty to match any court.
-4. Click Save.
-5. Confirm local rule state exists:
+2. Click `Use Current Page`.
+3. Confirm Start and End are filled from a currently available continuous range.
+4. Optionally enter court keywords such as `1号, 室内`; leave it empty to match any court.
+5. Click Save.
+6. Confirm local rule state exists:
 
    ```bash
    cat "$HOME/Library/Application Support/ZacksBar/watch-rules.json"
    ```
 
-6. Refresh the menu and confirm future availability notifications follow the saved range.
+7. Refresh the menu and confirm future availability notifications follow the saved range.
 
 ## 7. Check Diagnostics
 

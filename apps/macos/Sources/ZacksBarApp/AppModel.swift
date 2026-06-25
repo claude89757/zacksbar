@@ -9,18 +9,40 @@ final class AppModel: ObservableObject {
         WatchRule(id: "default-evening", dateMode: .latestBookable, start: "19:00", end: "21:00", courtKeywords: [])
     ]
 
-    func handle(message: NativeMessage) {
-        switch message.type {
-        case "availability.updated":
-            statusText = "Monitoring"
-            latestAlert = "Availability synced"
-        case "captcha.detected":
-            statusText = "Captcha required"
-            latestAlert = "Open captcha page"
-        case "health.ping":
-            statusText = "Connected"
-        default:
-            statusText = "Received \(message.type)"
+    private let store: AppSupportStore?
+
+    init(store: AppSupportStore? = nil) {
+        if let store {
+            self.store = store
+        } else {
+            self.store = try? AppSupportStore()
         }
+        reloadLatestState()
     }
+
+    func reloadLatestState() {
+        guard let state = try? store?.readLatestState() else {
+            statusText = "Waiting for Chrome"
+            latestAlert = nil
+            return
+        }
+        apply(state.menuState)
+    }
+
+    func handle(message: NativeMessage) {
+        let state = LatestAppState(
+            updatedAt: message.sentAt,
+            latestAvailability: message.type == "availability.updated" ? message : nil,
+            latestCaptcha: message.type == "captcha.detected" ? message : nil,
+            latestHealth: message.type == "health.ping" ? message : nil,
+            latestMessageType: message.type
+        )
+        apply(state.menuState)
+    }
+
+    private func apply(_ menuState: MenuState) {
+        statusText = menuState.statusText
+        latestAlert = menuState.latestAlert
+    }
+
 }

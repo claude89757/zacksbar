@@ -1,6 +1,6 @@
 # Development Smoke Test
 
-Use this checklist after changing the Chrome extension, native host, protocol schemas, or menu bar app skeleton.
+Use this checklist after changing the Chrome extension, native host, protocol schemas, latest-state persistence, or menu bar app skeleton.
 
 ## 1. Run Automated Checks
 
@@ -13,9 +13,9 @@ swift build
 
 Expected result:
 
-- JavaScript parser tests pass.
+- JavaScript parser and polling tests pass.
 - Protocol fixtures validate against JSON schemas.
-- Swift core tests pass.
+- Swift core tests pass, including latest-state persistence and menu-state summarization.
 - `ZacksBarApp` and `zacksbar-native-host` build.
 
 ## 2. Load The Chrome Extension
@@ -46,14 +46,22 @@ swift run ZacksBarApp
 Expected result:
 
 - A `Z` menu bar item appears.
-- The menu shows app status and setup actions.
+- The menu shows app status, setup actions, and a Refresh item.
 
 ## 5. Exercise Browser Messaging
 
 1. Open a supported ydmap booking page in Chrome.
 2. Reload the page after the extension is installed.
-3. If a captcha appears, confirm ZacksBar reports manual attention.
-4. Confirm the app can offer a jump action back to the relevant browser page as that flow is implemented.
+3. Wait for the content script polling interval to inspect the page.
+4. Confirm local latest state exists:
+
+   ```bash
+   cat "$HOME/Library/Application Support/ZacksBar/latest-state.json"
+   ```
+
+5. Click Refresh in the ZacksBar menu.
+6. If availability was parsed, confirm the menu shows `Monitoring <date>` and an availability alert.
+7. If a captcha appears, confirm the menu reports manual attention.
 
 ## 6. Inspect Boundaries
 
@@ -62,3 +70,4 @@ Before considering the smoke test complete, confirm:
 - No credentials or cookies are written to repo files.
 - URLs in fixtures and logs do not contain query strings with private identifiers.
 - The app does not bypass captcha or submit a booking automatically.
+- `latest-state.json` remains local runtime data and is not tracked by Git.

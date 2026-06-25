@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "ZacksBar Companion",
+  "version": "0.1.0",
+  "description": "Connects ydmap tennis court pages to ZacksBar.",
+  "permissions": ["nativeMessaging", "tabs", "storage"],
+  "host_permissions": ["https://*.ydmap.cn/booking/*"],
+  "background": {
+    "service_worker": "src/background/service_worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.ydmap.cn/booking/*"],
+      "js": ["src/content/ydmap_content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

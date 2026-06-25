@@ -42,10 +42,12 @@ public extension AppSupportStore {
         let companionVersion = latestState?.latestHealth?.payload["version"]?.stringValue
         let parserDiagnostics = latestState?.latestParserDiagnostics
         let parserSlotCount = parserDiagnostics?.payload["slotCount"]?.intValue
+        let pendingCommands = try readPendingCommands()
         let companionStatus = companionStatus(
             actualVersion: companionVersion,
             expectedVersion: expectedCompanionVersion
         )
+        let pendingCommandStatus = pendingCommandStatus(pendingCommands)
 
         return SetupChecklist(steps: [
             SetupStep(
@@ -74,6 +76,11 @@ public extension AppSupportStore {
                 isComplete: companionStatus.isComplete
             ),
             SetupStep(
+                label: "Pending Browser Commands",
+                value: pendingCommandStatus.value,
+                isComplete: pendingCommandStatus.isComplete
+            ),
+            SetupStep(
                 label: "Parser Diagnostics",
                 value: parserSlotCount.map { "\($0) slots" } ?? "waiting",
                 isComplete: parserDiagnostics != nil
@@ -89,6 +96,15 @@ public extension AppSupportStore {
             return ("reload \(actualVersion) -> \(expectedVersion)", false)
         }
         return (actualVersion, true)
+    }
+
+    private func pendingCommandStatus(_ commands: [NativeMessage]) -> (value: String, isComplete: Bool) {
+        guard !commands.isEmpty else {
+            return ("0 pending", true)
+        }
+        let visibleTypes = commands.prefix(3).map(\.type).joined(separator: ", ")
+        let suffix = commands.count > 3 ? ", ..." : ""
+        return ("\(commands.count) pending: \(visibleTypes)\(suffix)", false)
     }
 }
 

@@ -28,12 +28,13 @@
    - Native Host Executable: `ready`.
    - Native Host Manifest: `installed`.
    - Browser Companion: the loaded companion version after Chrome connects.
+   - Pending Browser Commands: `0 pending` when the browser command queue is empty.
 
 8. Open a supported ydmap booking page and reload it.
 
 9. Refresh the setup assistant again. `Latest Browser State` should show `health.ping`, `availability.updated`, or `captcha.detected`.
 
-10. After changing files under `extensions/chrome`, click `Reload Browser Extension` in the setup assistant and then reload the ydmap page. The reload command is delivered the next time the browser extension connects to the native host.
+10. After changing files under `extensions/chrome`, click `Reload Browser Extension` in the setup assistant and then reload the ydmap page. `Pending Browser Commands` should briefly show `1 pending: extension.reload`, then return to `0 pending` after the browser extension reconnects and drains the command.
 
 ## Script Fallback
 
